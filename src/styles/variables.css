@@ -1,0 +1,42 @@
+:root {
+  /* Cores Meditativas e Terapêuticas */
+  --bg-main: hsl(30, 20%, 99%);
+  --bg-card: hsl(0, 0%, 100%);
+  --bg-input: hsl(30, 10%, 97%);
+  
+  --color-primary: hsl(255, 60%, 65%);       /* Lavanda Suave - Cuidado/Calma */
+  --color-primary-light: hsl(255, 60%, 94%);
+  --color-secondary: hsl(150, 25%, 52%);     /* Verde Sálvia - Progresso/Vida */
+  --color-secondary-light: hsl(150, 25%, 93%);
+  --color-accent: hsl(24, 75%, 70%);         /* Pêssego Suave - Energia/Acolhimento */
+  --color-accent-light: hsl(24, 75%, 94%);
+  
+  /* Cores de Texto */
+  --text-primary: hsl(30, 8%, 15%);         /* Cinza Quente Escuro */
+  --text-secondary: hsl(30, 5%, 45%);       /* Cinza Médio Suave */
+  --text-tertiary: hsl(30, 4%, 65%);        /* Cinza Claro */
+  --text-on-primary: hsl(0, 0%, 100%);
+  
+  /* Elementos de Interface */
+  --border-radius-sm: 12px;
+  --border-radius-md: 20px;
+  --border-radius-lg: 28px;
+  --border-radius-pill: 9999px;
+  
+  --border-subtle: rgba(0, 0, 0, 0.04);
+  
+  --shadow-subtle: 0 4px 20px rgba(0, 0, 0, 0.015);
+  --shadow-premium: 0 10px 40px rgba(29, 28, 26, 0.04);
+  --shadow-active: 0 2px 10px rgba(29, 28, 26, 0.02);
+  
+  /* Fontes */
+  --font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  
+  /* Transições Físicas Refinadas */
+  --transition-smooth: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-fast: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  
+  /* Tamanho Máximo Mobile */
+  --phone-width: 393px;
+  --phone-height: 852px;
+}
