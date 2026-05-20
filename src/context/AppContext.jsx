@@ -1,4 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
+import { getAdjustedGoals } from '../utils/feedbackHelper';
 
 export const AppContext = createContext();
 
@@ -7,11 +8,13 @@ export const AppProvider = ({ children }) => {
   const [goals, setGoals] = useState(() => {
     const saved = localStorage.getItem('unislim_goals');
     return saved ? JSON.parse(saved) : {
-      name: 'Você',
+      name: 'Leonardo',
       weightCurrent: '75',
       weightDesired: '68',
       activityLevel: 'moderate',
-      mainGoal: 'harmony',
+      mainGoal: 'lose_weight',
+      theme: 'calm',
+      avatar: '✨',
       isSet: true
     };
   });
@@ -30,9 +33,10 @@ export const AppProvider = ({ children }) => {
     
     return {
       date: today,
-      hydration: 0, // copos de água (meta sugerida: 8)
-      walkMinutes: 0, // minutos de caminhada (meta sugerida: 30)
-      mindfulEating: false // comeu de forma consciente
+      hydration: 0, 
+      walkMinutes: 0, 
+      mindfulEating: false,
+      mentalPause: false // Renomeado de sleepOffTelas para mentalPause
     };
   });
 
@@ -41,8 +45,37 @@ export const AppProvider = ({ children }) => {
     return saved ? JSON.parse(saved) : [];
   });
 
+  const [mealHistory, setMealHistory] = useState(() => {
+    const saved = localStorage.getItem('unislim_meals');
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  // Estado do plano alimentar — reseta todo dia
+  const [mealPlanState, setMealPlanState] = useState(() => {
+    const saved = localStorage.getItem('unislim_meal_plan_state');
+    const today = new Date().toDateString();
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (parsed.date === today) return parsed;
+    }
+    return { date: today, completed: [] };
+  });
+
   const [activeTab, setActiveTab] = useState('home');
   const [streak, setStreak] = useState(0);
+
+  const [profileImage, setProfileImage] = useState(() => {
+    return localStorage.getItem('profileImage') || '';
+  });
+
+  // Efeito para salvar a foto de perfil no localStorage
+  useEffect(() => {
+    if (profileImage) {
+      localStorage.setItem('profileImage', profileImage);
+    } else {
+      localStorage.removeItem('profileImage');
+    }
+  }, [profileImage]);
 
   // Efeito para salvar metas no localStorage
   useEffect(() => {
@@ -54,11 +87,20 @@ export const AppProvider = ({ children }) => {
     localStorage.setItem('unislim_daily_plan', JSON.stringify(dailyPlan));
   }, [dailyPlan]);
 
+  // Efeito para salvar o plano alimentar no localStorage
+  useEffect(() => {
+    localStorage.setItem('unislim_meal_plan_state', JSON.stringify(mealPlanState));
+  }, [mealPlanState]);
+
+  // Efeito para salvar refeições no localStorage
+  useEffect(() => {
+    localStorage.setItem('unislim_meals', JSON.stringify(mealHistory));
+  }, [mealHistory]);
+
   // Efeito para salvar os check-ins e recalcular a consistência (streak)
   useEffect(() => {
     localStorage.setItem('unislim_checkins', JSON.stringify(checkIns));
     
-    // Lógica refinada para calcular a consistência (dias consecutivos)
     if (checkIns.length === 0) {
       setStreak(0);
       return;
@@ -69,7 +111,6 @@ export const AppProvider = ({ children }) => {
     let currentStreak = 0;
     let expectedDate = new Date();
     
-    // Formata uma data para string local simples
     const formatDateStr = (date) => date.toDateString();
     
     const todayStr = formatDateStr(expectedDate);
@@ -77,20 +118,17 @@ export const AppProvider = ({ children }) => {
     yesterday.setDate(yesterday.getDate() - 1);
     const yesterdayStr = formatDateStr(yesterday);
     
-    // Se o check-in mais recente não for hoje nem ontem, a sequência quebrou
     const mostRecentCheckIn = sortedDates[0];
     if (mostRecentCheckIn !== todayStr && mostRecentCheckIn !== yesterdayStr) {
       setStreak(0);
       return;
     }
 
-    // Calcula os dias consecutivos voltando no tempo
     for (let i = 0; i < sortedDates.length; i++) {
       const checkInDate = new Date(sortedDates[i]);
       const diffTime = Math.abs(expectedDate - checkInDate);
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
       
-      // Se a diferença for de 0 ou 1 dia do esperado, a consistência continua
       if (diffDays <= 1) {
         currentStreak++;
         expectedDate = checkInDate;
@@ -103,6 +141,23 @@ export const AppProvider = ({ children }) => {
     setStreak(currentStreak);
   }, [checkIns]);
 
+  // Dados computados com base no check-in de hoje
+  const todayStr = new Date().toDateString();
+  const todayCheckIn = checkIns.find(c => c.date === todayStr);
+  const adjustedGoals = getAdjustedGoals(todayCheckIn);
+
+  // Progresso diário baseado em 4 hábitos de 25% cada
+  const getDailyPercentage = () => {
+    let score = 0;
+    score += Math.min(dailyPlan.hydration / adjustedGoals.hydrationGoal, 1) * 25;
+    score += Math.min(dailyPlan.walkMinutes / adjustedGoals.walkGoal, 1) * 25;
+    score += dailyPlan.mindfulEating ? 25 : 0;
+    score += dailyPlan.mentalPause ? 25 : 0; // mentalPause
+    return Math.round(score);
+  };
+  
+  const dailyPercentage = getDailyPercentage();
+
   // Funções de manipulação do estado
   const saveGoals = (newGoals) => {
     setGoals({
@@ -114,7 +169,7 @@ export const AppProvider = ({ children }) => {
   const updateHydration = (value) => {
     setDailyPlan(prev => ({
       ...prev,
-      hydration: Math.max(0, Math.min(10, value)) // limite máximo de 10 copos
+      hydration: Math.max(0, Math.min(10, value))
     }));
   };
 
@@ -132,10 +187,15 @@ export const AppProvider = ({ children }) => {
     }));
   };
 
+  const toggleMentalPause = () => {
+    setDailyPlan(prev => ({
+      ...prev,
+      mentalPause: !prev.mentalPause // mentalPause
+    }));
+  };
+
   const addCheckIn = (checkInData) => {
     const todayStr = new Date().toDateString();
-    
-    // Evita duplicar check-in no mesmo dia
     const existingIndex = checkIns.findIndex(c => c.date === todayStr);
     
     if (existingIndex > -1) {
@@ -161,10 +221,26 @@ export const AppProvider = ({ children }) => {
     return checkIns.some(c => c.date === todayStr);
   };
 
+  const toggleMealCompleted = (mealId) => {
+    setMealPlanState(prev => {
+      const completed = prev.completed.includes(mealId)
+        ? prev.completed.filter(id => id !== mealId)
+        : [...prev.completed, mealId];
+      return { ...prev, completed };
+    });
+  };
+
+  const addMeal = (mealData) => {
+    setMealHistory(prev => [mealData, ...prev].slice(0, 50)); // Máx 50 refeições
+  };
+
   const resetData = () => {
     localStorage.removeItem('unislim_goals');
     localStorage.removeItem('unislim_daily_plan');
     localStorage.removeItem('unislim_checkins');
+    localStorage.removeItem('unislim_meals');
+    localStorage.removeItem('unislim_meal_plan_state');
+    localStorage.removeItem('profileImage');
     setGoals({
       name: 'Você',
       weightCurrent: '75',
@@ -177,12 +253,29 @@ export const AppProvider = ({ children }) => {
       date: new Date().toDateString(),
       hydration: 0,
       walkMinutes: 0,
-      mindfulEating: false
+      mindfulEating: false,
+      mentalPause: false
     });
     setCheckIns([]);
+    setMealHistory([]);
+    setMealPlanState({ date: new Date().toDateString(), completed: [] });
+    setProfileImage('');
     setStreak(0);
     setActiveTab('home');
   };
+
+  // Contagem de todos os hábitos concluídos na semana corrente (para o painel de consistência)
+  const getWeeklyHabitsCount = () => {
+    let count = 0;
+    if (dailyPlan.hydration >= adjustedGoals.hydrationGoal) count++;
+    if (dailyPlan.walkMinutes >= adjustedGoals.walkGoal) count++;
+    if (dailyPlan.mindfulEating) count++;
+    if (dailyPlan.mentalPause) count++;
+    
+    return count + (checkIns.length * 3);
+  };
+
+  const weeklyHabitsCount = getWeeklyHabitsCount();
 
   return (
     <AppContext.Provider value={{
@@ -191,14 +284,25 @@ export const AppProvider = ({ children }) => {
       checkIns,
       activeTab,
       streak,
+      todayCheckIn,
+      adjustedGoals,
+      dailyPercentage,
+      weeklyHabitsCount,
+      mealHistory,
+      mealPlanState,
+      addMeal,
+      toggleMealCompleted,
       saveGoals,
       updateHydration,
       updateWalkMinutes,
       toggleMindfulEating,
+      toggleMentalPause, // toggleMentalPause
       addCheckIn,
       hasDoneCheckInToday,
       setActiveTab,
-      resetData
+      resetData,
+      profileImage,
+      setProfileImage
     }}>
       {children}
     </AppContext.Provider>

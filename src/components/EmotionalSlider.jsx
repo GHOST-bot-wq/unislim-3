@@ -1,38 +1,37 @@
 import React, { useState, useEffect } from 'react';
 
 const EmotionalSlider = ({ type, title, subtitle, value, onChange }) => {
-  const [emotion, setEmotion] = useState({ emoji: '😌', text: 'Sereno' });
+  const [emotion, setEmotion] = useState({ emoji: '🙂', text: 'Focado' });
   const [animate, setAnimate] = useState(false);
 
-  // Mapeamento de emoções com base no tipo e valor (1 a 5)
+  // Mapeamento de respostas objetivas de check-in (1 a 5)
   const emotionMap = {
     mood: {
-      1: { emoji: '😔', text: 'Aflito / Desanimado' },
-      2: { emoji: '😕', text: 'Instável' },
-      3: { emoji: '😌', text: 'Sereno' },
-      4: { emoji: '😊', text: 'Contente' },
-      5: { emoji: '✨', text: 'Pleno' }
+      1: { emoji: '😕', text: 'Baixo foco' },
+      2: { emoji: '😐', text: 'Instável' },
+      3: { emoji: '🙂', text: 'Focado' },
+      4: { emoji: '😊', text: 'Motivado' },
+      5: { emoji: '⚡', text: 'Totalmente focado' }
     },
     energy: {
       1: { emoji: '🥱', text: 'Esgotado' },
-      2: { emoji: '💤', text: 'Baixa' },
+      2: { emoji: '💤', text: 'Disposição baixa' },
       3: { emoji: '🔋', text: 'Equilibrada' },
-      4: { emoji: '⚡', text: 'Alta' },
-      5: { emoji: '💫', text: 'Vibrante' }
+      4: { emoji: '⚡', text: 'Alta disposição' },
+      5: { emoji: '💫', text: 'Disposição máxima' }
     },
     emotionalHunger: {
-      1: { emoji: '🌿', text: 'Em paz' },
-      2: { emoji: '🍵', text: 'Sob controle' },
-      3: { emoji: '🍫', text: 'Leve desejo' },
-      4: { emoji: '🍕', text: 'Forte impulso' },
-      5: { emoji: '🚨', text: 'Impulso urgente' }
+      1: { emoji: '✅', text: 'Sob controle' },
+      2: { emoji: '🍵', text: 'Impulso leve' },
+      3: { emoji: '🍫', text: 'Vontade de doce' },
+      4: { emoji: '🍕', text: 'Ansiedade moderada' },
+      5: { emoji: '🚨', text: 'Impulso forte' }
     }
   };
 
   useEffect(() => {
     if (emotionMap[type] && emotionMap[type][value]) {
       setEmotion(emotionMap[type][value]);
-      // Dispara animação rápida de troca de emoji
       setAnimate(true);
       const timer = setTimeout(() => setAnimate(false), 200);
       return () => clearTimeout(timer);
@@ -42,6 +41,7 @@ const EmotionalSlider = ({ type, title, subtitle, value, onChange }) => {
   return (
     <div className="emotional-slider-card animate-scale-up">
       <div className="slider-header text-center">
+        <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '8px' }}>{title}</h3>
         <span className={`slider-emoji-display ${animate ? 'scale-effect' : ''}`}>
           {emotion.emoji}
         </span>

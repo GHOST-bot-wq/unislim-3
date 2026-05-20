@@ -1,15 +1,16 @@
 import React from 'react';
 
-const HabitCard = ({ type, title, subtitle, value, onChange, icon }) => {
+const HabitCard = ({ type, title, subtitle, value, maxValue, onChange, icon }) => {
   const renderInteraction = () => {
     switch (type) {
       case 'hydration': {
-        const cups = [1, 2, 3, 4, 5, 6, 7, 8];
+        const maxCups = maxValue || 8;
+        const cups = Array.from({ length: maxCups }, (_, i) => i + 1);
         return (
           <div className="habit-interaction hydration-grid">
             <div className="habit-stat">
               <span className="habit-value">{value}</span>
-              <span className="habit-unit">/ 8 copos</span>
+              <span className="habit-unit">/ {maxCups} copos</span>
             </div>
             <div className="cups-container">
               {cups.map((cup) => {
@@ -34,11 +35,12 @@ const HabitCard = ({ type, title, subtitle, value, onChange, icon }) => {
       }
       
       case 'walk': {
+        const targetMin = maxValue || 30;
         return (
           <div className="habit-interaction walk-control">
             <div className="habit-stat">
               <span className="habit-value">{value}</span>
-              <span className="habit-unit">minutos</span>
+              <span className="habit-unit">/ {targetMin} minutos</span>
             </div>
             <div className="stepper-container">
               <button
@@ -60,18 +62,19 @@ const HabitCard = ({ type, title, subtitle, value, onChange, icon }) => {
         );
       }
       
-      case 'eating': {
+      case 'eating':
+      case 'sleep': {
         const isChecked = !!value;
         return (
           <div className="habit-interaction eating-toggle" onClick={() => onChange()}>
             <div className="habit-stat">
               <span className="habit-status-text">
-                {isChecked ? 'Concluído com calma' : 'Ainda não registrado'}
+                {isChecked ? 'Concluído' : 'Ainda não registrado'}
               </span>
             </div>
             <button
               className={`toggle-check-bubble interactive-hover ${isChecked ? 'checked' : ''}`}
-              aria-label="Marcar alimentação consciente"
+              aria-label="Marcar hábito"
             >
               {isChecked && (
                 <svg width="14" height="10" viewBox="0 0 14 10" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">

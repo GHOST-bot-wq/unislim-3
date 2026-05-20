@@ -1304,6 +1304,64 @@ p {
   color: var(--text-secondary);
 }
 
+/* Ajustes Premium para a Home Reestruturada */
+.streak-badge-top {
+  padding: 6px 12px;
+  border-radius: var(--border-radius-pill);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.home-main-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.home-main-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.05);
+}
+
+.mission-item-card {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.mission-item-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+}
+
+.btn-stepper-discreet {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.btn-stepper-discreet:hover {
+  background-color: var(--bg-input) !important;
+  color: var(--text-primary) !important;
+}
+
+.btn-action-premium {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-action-premium:hover:not(.completed) {
+  transform: scale(1.04);
+  filter: brightness(1.05);
+}
+
+.btn-action-premium.completed {
+  cursor: default !important;
+}
+
+.home-adaptive-feedback-card {
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+
 
 
 

@@ -1,0 +1,478 @@
+/* ────────────────────────────────────────────────────────
+   home.css — Estilos Premium do UniSlim com Orb Fluida e Clean Style
+   ──────────────────────────────────────────────────────── */
+
+.home-container {
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+  padding-top: 24px;
+  padding-bottom: 110px;
+  background-color: var(--bg-main);
+  position: relative;
+  overflow: hidden;
+  animation: pageReveal 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes pageReveal {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ORBES DE BRILHO AMBIENTE NO BACKGROUND */
+.ambient-glow-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.ambient-glow-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.ambient-glow-orb.primary {
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, var(--color-primary-light) 0%, rgba(255, 255, 255, 0) 70%);
+  top: -80px;
+  right: -80px;
+  animation: floatOrb1 16s infinite ease-in-out;
+}
+
+.ambient-glow-orb.accent {
+  width: 250px;
+  height: 250px;
+  background: radial-gradient(circle, var(--color-accent-light) 0%, rgba(255, 255, 255, 0) 70%);
+  bottom: 15%;
+  left: -80px;
+  animation: floatOrb2 20s infinite ease-in-out;
+}
+
+@keyframes floatOrb1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-20px, 30px) scale(1.08); }
+}
+
+@keyframes floatOrb2 {
+  0%, 100% { transform: translate(0, 0) scale(1.05); }
+  50% { transform: translate(30px, -20px) scale(0.95); }
+}
+
+.home-container > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ────────────────────────────────────────────────────────
+   1. HEADER PREMIUM
+   ──────────────────────────────────────────────────────── */
+.home-minimal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.home-minimal-header .greeting-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 25px;
+  font-weight: 800;
+  letter-spacing: -0.9px;
+  color: var(--text-primary);
+  line-height: 1.15;
+}
+
+.home-minimal-header .greeting-subtitle {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+/* Botão do Avatar Circular com Glassmorfismo */
+.home-profile-avatar-btn {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1.5px solid rgba(255, 255, 255, 0.8);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02), inset 0 1px 0 rgba(255,255,255,0.8);
+  transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.25s ease;
+  overflow: hidden;
+}
+
+.home-profile-avatar-btn:hover {
+  transform: scale(1.04);
+}
+
+.home-profile-avatar-btn:active {
+  transform: scale(0.94);
+}
+
+.home-avatar-image-cropped {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.home-avatar-letter {
+  font-family: 'Outfit', sans-serif;
+  font-size: 17px;
+  font-weight: 850;
+  color: var(--color-primary);
+}
+
+/* ────────────────────────────────────────────────────────
+   2. ORB CENTRAL FLUIDO (ESTRELA DO SHOW)
+   ──────────────────────────────────────────────────────── */
+.home-orb-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 16px 0;
+}
+
+.home-fluid-orb {
+  width: 190px;
+  height: 190px;
+  border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-accent, hsl(270, 75%, 72%)));
+  box-shadow: 
+    0 15px 45px rgba(123, 97, 255, 0.15), 
+    inset 0 -10px 20px rgba(0, 0, 0, 0.12),
+    inset 0 10px 20px rgba(255, 255, 255, 0.35);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  animation: morphOrb 9s infinite ease-in-out, breatheOrb 5s infinite ease-in-out;
+  cursor: pointer;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Temas mudam gradientes da orb baseados nas cores primárias */
+.theme-calm .home-fluid-orb {
+  background: linear-gradient(135deg, hsl(255, 65%, 65%), hsl(280, 70%, 75%));
+  box-shadow: 0 15px 45px rgba(123, 97, 255, 0.2), inset 0 -10px 20px rgba(0, 0, 0, 0.12);
+}
+
+.theme-focus .home-fluid-orb {
+  background: linear-gradient(135deg, hsl(205, 75%, 60%), hsl(150, 30%, 52%));
+  box-shadow: 0 15px 45px rgba(60, 150, 255, 0.18), inset 0 -10px 20px rgba(0, 0, 0, 0.12);
+}
+
+.theme-energy .home-fluid-orb {
+  background: linear-gradient(135deg, hsl(20, 85%, 65%), hsl(42, 70%, 55%));
+  box-shadow: 0 15px 45px rgba(244, 160, 144, 0.22), inset 0 -10px 20px rgba(0, 0, 0, 0.12);
+}
+
+.home-fluid-orb:active {
+  transform: scale(0.96);
+}
+
+@keyframes morphOrb {
+  0% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+  50% { border-radius: 45% 55% 45% 55% / 45% 55% 45% 55%; }
+  100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+}
+
+@keyframes breatheOrb {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.home-fluid-orb .orb-emoji {
+  font-size: 40px;
+  margin-bottom: 6px;
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+}
+
+.home-fluid-orb .orb-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 2px;
+}
+
+.home-fluid-orb .orb-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 17px;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.2px;
+}
+
+/* ────────────────────────────────────────────────────────
+   3. CONTADOR DE CALORIAS FUNCIONAL
+   ──────────────────────────────────────────────────────── */
+.home-cta-action-row {
+  display: flex;
+  justify-content: center;
+}
+
+.home-calorie-counter-pill {
+  width: 82%;
+  padding: 16px 20px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 
+    0 10px 25px rgba(0, 0, 0, 0.02),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0 auto;
+  transition: transform 0.3s ease;
+}
+
+.home-calorie-counter-pill:hover {
+  transform: translateY(-1px);
+}
+
+.home-calorie-counter-pill .counter-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.home-calorie-counter-pill .counter-consumed {
+  font-size: 13.5px;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.home-calorie-counter-pill .counter-consumed strong {
+  font-family: 'Outfit', sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--color-primary);
+}
+
+.home-calorie-counter-pill .counter-remaining {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.home-calorie-counter-pill .counter-progress-bar {
+  width: 100%;
+  height: 5px;
+  background-color: var(--color-primary-light);
+  border-radius: var(--border-radius-pill);
+  overflow: hidden;
+}
+
+.home-calorie-counter-pill .counter-progress-fill {
+  height: 100%;
+  background-color: var(--color-primary);
+  border-radius: var(--border-radius-pill);
+  transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ────────────────────────────────────────────────────────
+   4. CARD DO SCAN INTELIGENTE
+   ──────────────────────────────────────────────────────── */
+.home-scan-promo-card {
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 26px;
+  padding: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  box-shadow: var(--shadow-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Brilho sutil na borda do card de IA */
+.home-scan-promo-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(123, 97, 255, 0.02) 0%, rgba(244, 160, 144, 0.02) 100%);
+  pointer-events: none;
+}
+
+.home-scan-promo-card .promo-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.home-scan-promo-card .promo-badge {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--color-primary);
+  background-color: var(--color-primary-light);
+  padding: 3px 8px;
+  border-radius: 10px;
+}
+
+.home-scan-promo-card .promo-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.3px;
+}
+
+.home-scan-promo-card .promo-desc {
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  line-height: 1.45;
+}
+
+.home-scan-promo-card .btn-promo-trigger {
+  padding: 12px 18px;
+  border-radius: 14px;
+  border: none;
+  background-color: var(--color-primary);
+  color: #ffffff;
+  font-family: 'Outfit', sans-serif;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(123, 97, 255, 0.12);
+  align-self: flex-start;
+  transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.home-scan-promo-card .btn-promo-trigger:active {
+  transform: scale(0.96);
+}
+
+/* ────────────────────────────────────────────────────────
+   5. MINI PREVIEW DO PLANO ALIMENTAR EDITORIAL
+   ──────────────────────────────────────────────────────── */
+.home-diet-editorial-card {
+  background: var(--bg-card);
+  border-radius: 28px;
+  padding: 24px;
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.home-diet-editorial-card .editorial-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.home-diet-editorial-card .editorial-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.4px;
+}
+
+.home-diet-editorial-card .editorial-subtitle {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  letter-spacing: 0.8px;
+}
+
+.home-diet-editorial-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.home-diet-editorial-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 10px 0;
+  border-bottom: 1px dashed var(--border-subtle);
+}
+
+.home-diet-editorial-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.home-diet-editorial-item .meal-emoji {
+  font-size: 22px;
+  margin-top: 2px;
+}
+
+.home-diet-editorial-item .meal-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.home-diet-editorial-item .meal-period {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--color-primary);
+  letter-spacing: 0.5px;
+}
+
+.home-diet-editorial-item .meal-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.home-diet-editorial-card .btn-editorial-more {
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  align-self: flex-start;
+  margin-top: 6px;
+  transition: transform 0.2s ease;
+}
+
+.home-diet-editorial-card .btn-editorial-more:active {
+  transform: translateX(2px);
+}

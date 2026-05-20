@@ -15,7 +15,7 @@
   --text-primary: hsl(30, 8%, 15%);         /* Cinza Quente Escuro */
   --text-secondary: hsl(30, 5%, 45%);       /* Cinza Médio Suave */
   --text-tertiary: hsl(30, 4%, 65%);        /* Cinza Claro */
-  --text-on-primary: hsl(0, 0%, 100%);
+  --text-on-primary: hsl(30, 8%, 15%);
   
   /* Elementos de Interface */
   --border-radius-sm: 12px;
@@ -39,4 +39,32 @@
   /* Tamanho Máximo Mobile */
   --phone-width: 393px;
   --phone-height: 852px;
+}
+
+/* Classes de Tema Emocional Dinâmico */
+.theme-calm {
+  --color-primary: hsl(255, 65%, 65%);       /* Violeta/Lavanda Premium */
+  --color-primary-light: hsl(255, 60%, 95%);
+  --color-secondary: hsl(150, 30%, 52%);     /* Verde Sálvia */
+  --color-secondary-light: hsl(150, 30%, 93%);
+  --color-accent: hsl(24, 75%, 70%);         /* Pêssego */
+  --color-accent-light: hsl(24, 75%, 94%);
+}
+
+.theme-focus {
+  --color-primary: hsl(205, 75%, 60%);       /* Azul Suave */
+  --color-primary-light: hsl(205, 60%, 93%);
+  --color-secondary: hsl(145, 30%, 52%);     /* Verde Sálvia */
+  --color-secondary-light: hsl(145, 30%, 92%);
+  --color-accent: hsl(175, 45%, 60%);         /* Verde-água */
+  --color-accent-light: hsl(175, 45%, 93%);
+}
+
+.theme-energy {
+  --color-primary: hsl(20, 85%, 65%);        /* Pêssego / Laranja Suave */
+  --color-primary-light: hsl(20, 80%, 94%);
+  --color-secondary: hsl(42, 70%, 55%);      /* Champagne / Amarelo Dourado */
+  --color-secondary-light: hsl(42, 60%, 93%);
+  --color-accent: hsl(340, 70%, 65%);        /* Rosa Suave */
+  --color-accent-light: hsl(340, 70%, 94%);
 }

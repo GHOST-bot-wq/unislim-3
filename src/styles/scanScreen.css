@@ -1,0 +1,426 @@
+/* ────────────────────────────────────────────────────────
+   scanScreen.css — Tela de Scanner Inteligente IA (Cal AI Style)
+   ──────────────────────────────────────────────────────── */
+
+.scanner-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding-top: 24px;
+  padding-bottom: 100px;
+  background-color: var(--bg-main);
+  animation: pageReveal 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.scanner-header-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background-color: rgba(123, 97, 255, 0.06);
+  border-radius: var(--border-radius-pill);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-primary);
+  border: 1px solid rgba(123, 97, 255, 0.05);
+  margin-bottom: 4px;
+}
+
+.scanner-header-badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--color-primary);
+  box-shadow: 0 0 8px var(--color-primary);
+}
+
+.scanner-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.8px;
+  color: var(--text-primary);
+  line-height: 1.15;
+}
+
+.scanner-subtitle {
+  font-size: 13.5px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+  line-height: 1.45;
+}
+
+/* ────────────────────────────────────────────────────────
+   FAUX CAMERA VIEW (ONBOARDING & IDLE)
+   ──────────────────────────────────────────────────────── */
+.scan-camera-fake {
+  position: relative;
+  height: 380px;
+  border-radius: 32px;
+  background-color: #0b0a0a;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 
+    0 20px 45px rgba(29, 28, 26, 0.08),
+    inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.scan-camera-fake:active {
+  transform: scale(0.98);
+}
+
+.scan-camera-lens-glow {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(123, 97, 255, 0.12) 0%, rgba(123, 97, 255, 0) 70%);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  animation: cameraBreath 6s infinite ease-in-out;
+}
+
+@keyframes cameraBreath {
+  0%, 100% { opacity: 0.7; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+}
+
+.scan-camera-corners {
+  position: absolute;
+  width: 220px;
+  height: 220px;
+  border: 1.5px dashed rgba(255, 255, 255, 0.2);
+  border-radius: 24px;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.scan-camera-icon-wrapper {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  margin-bottom: 16px;
+  z-index: 2;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.scan-camera-text-primary {
+  font-family: 'Outfit', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffffff;
+  z-index: 2;
+  letter-spacing: -0.2px;
+}
+
+.scan-camera-text-secondary {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.55);
+  margin-top: 4px;
+  z-index: 2;
+}
+
+/* LASER SCANNING ANIMATION */
+.scan-laser-line {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(to right, rgba(123, 97, 255, 0) 5%, var(--color-primary) 50%, rgba(123, 97, 255, 0) 95%);
+  box-shadow: 0 0 15px var(--color-primary);
+  animation: laserSweep 3s infinite ease-in-out;
+  z-index: 3;
+}
+
+@keyframes laserSweep {
+  0% { top: 8%; }
+  50% { top: 92%; }
+  100% { top: 8%; }
+}
+
+/* ────────────────────────────────────────────────────────
+   CAMERA PREVIEW & CONTROLS
+   ──────────────────────────────────────────────────────── */
+.scan-camera-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 32px;
+}
+
+.scan-preview-wrapper {
+  position: relative;
+  height: 380px;
+  border-radius: 32px;
+  overflow: hidden;
+  box-shadow: var(--shadow-premium);
+  border: 1px solid var(--border-subtle);
+}
+
+.scan-preview-change-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  padding: 8px 16px;
+  background-color: rgba(29, 28, 26, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--border-radius-pill);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.scan-preview-change-btn:active {
+  transform: scale(0.94);
+}
+
+/* BUTTONS */
+.btn-scan-action {
+  width: 100%;
+  padding: 18px 24px;
+  border-radius: 20px;
+  border: none;
+  background-color: var(--color-primary);
+  color: #ffffff;
+  font-family: 'Outfit', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: 0 10px 25px rgba(123, 97, 255, 0.15);
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
+}
+
+.btn-scan-action:active {
+  transform: scale(0.97);
+}
+
+.btn-scan-cancel {
+  width: 100%;
+  padding: 16px 24px;
+  border-radius: 20px;
+  border: 1px solid var(--border-subtle);
+  background-color: transparent;
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-scan-cancel:active {
+  background-color: var(--bg-input);
+}
+
+/* ────────────────────────────────────────────────────────
+   LOADING STEPS SYSTEM
+   ──────────────────────────────────────────────────────── */
+.scanner-loading-text-area {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 8px 6px;
+}
+
+.scanner-loading-step-text {
+  font-family: 'Outfit', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.scanner-loading-step-sub {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.scanner-progress-track {
+  width: 100%;
+  height: 6px;
+  background-color: var(--color-primary-light);
+  border-radius: var(--border-radius-pill);
+  overflow: hidden;
+  margin-top: 6px;
+}
+
+.scanner-progress-fill {
+  height: 100%;
+  background-color: var(--color-primary);
+  border-radius: var(--border-radius-pill);
+  transition: width 0.4s ease;
+}
+
+/* ────────────────────────────────────────────────────────
+   RESULTS UI (PREMIUM CARDS)
+   ──────────────────────────────────────────────────────── */
+.scanner-result-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  animation: pageReveal 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.scan-result-card-header {
+  position: relative;
+  height: 240px;
+  border-radius: 28px;
+  overflow: hidden;
+  box-shadow: var(--shadow-subtle);
+}
+
+.scan-result-card-header img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.scan-result-card-gradient {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to top, rgba(29, 28, 26, 0.8) 0%, rgba(29, 28, 26, 0) 70%);
+}
+
+.scan-result-title-overlay {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  z-index: 2;
+}
+
+.scan-result-title-overlay .name {
+  font-family: 'Outfit', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.5px;
+}
+
+.scan-result-title-overlay .health-pill {
+  align-self: flex-start;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 12px;
+  text-transform: uppercase;
+}
+
+.scan-result-title-overlay .health-pill.healthy {
+  background-color: rgba(84, 180, 137, 0.2);
+  color: hsl(150, 45%, 45%);
+  border: 1px solid rgba(84, 180, 137, 0.2);
+}
+
+.scan-result-title-overlay .health-pill.attention {
+  background-color: rgba(244, 160, 144, 0.2);
+  color: hsl(20, 65%, 55%);
+  border: 1px solid rgba(244, 160, 144, 0.2);
+}
+
+.scan-result-title-overlay .health-pill.neutral {
+  background-color: rgba(123, 97, 255, 0.15);
+  color: var(--color-primary);
+  border: 1px solid rgba(123, 97, 255, 0.15);
+}
+
+/* Calorias Hero */
+.scan-calories-detail-card {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 24px;
+  padding: 20px 24px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: var(--shadow-subtle);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.scan-calories-detail-card .label-grp {
+  display: flex;
+  flex-direction: column;
+}
+
+.scan-calories-detail-card .val {
+  font-family: 'Outfit', sans-serif;
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  color: var(--text-primary);
+}
+
+.scan-calories-detail-card .lbl {
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* Tags de Destaque */
+.scan-feedback-tags-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.scan-tag-pill {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background-color: rgba(0, 0, 0, 0.03);
+  padding: 4px 12px;
+  border-radius: 12px;
+}
+
+/* Seletor de Galeria Inferior */
+.gallery-selector-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  padding: 16px;
+  border-radius: 20px;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.gallery-selector-btn:active {
+  background-color: var(--bg-input);
+}

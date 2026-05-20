@@ -6,8 +6,11 @@ import NavigationBar from './components/NavigationBar';
 // Telas do App
 import Home from './screens/Home';
 import DailyPlan from './screens/DailyPlan';
-import CheckIn from './screens/CheckIn';
+import IntelligentPlan from './screens/IntelligentPlan';
+import MealScanner from './screens/MealScanner';
+import DietPlanScreen from './screens/DietPlanScreen';
 import Progress from './screens/Progress';
+import Profile from './screens/Profile';
 
 // Folha de Estilos Globais
 import './styles/global.css';
@@ -22,9 +25,15 @@ const AppContent = () => {
       case 'plan':
         return <DailyPlan />;
       case 'checkin':
-        return <CheckIn />;
+        return <IntelligentPlan />;
+      case 'scanner':
+        return <MealScanner />;
+      case 'dietplan':
+        return <DietPlanScreen />;
       case 'progress':
         return <Progress />;
+      case 'profile':
+        return <Profile />;
       default:
         return <Home />;
     }
@@ -32,8 +41,10 @@ const AppContent = () => {
 
   return (
     <DeviceFrame>
-      {renderActiveScreen()}
-      <NavigationBar />
+      <div className={`theme-${goals.theme || 'calm'}`} style={{ display: 'contents' }}>
+        {renderActiveScreen()}
+        <NavigationBar />
+      </div>
     </DeviceFrame>
   );
 };

@@ -1,0 +1,758 @@
+/* ═══════════════════════════════════════════════
+   MEAL SCANNER — Estilos Premium
+   Inspirado em Cal AI + Apple Health + Notion AI
+═══════════════════════════════════════════════ */
+
+.scanner-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding-bottom: 100px;
+}
+
+/* ─── Header ─── */
+.scanner-header {
+  margin-top: 8px;
+  margin-bottom: 28px;
+}
+
+.scanner-header-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--color-primary);
+  background-color: hsl(255, 60%, 96%);
+  padding: 4px 10px;
+  border-radius: 20px;
+  margin-bottom: 10px;
+}
+
+.scanner-header-badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--color-primary);
+  animation: pulse-dot 2s infinite ease-in-out;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.8); }
+}
+
+.scanner-title {
+  font-size: 27px;
+  font-weight: 800;
+  letter-spacing: -0.7px;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.scanner-subtitle {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-top: 6px;
+  line-height: 1.45;
+}
+
+/* ─── Upload Zone — Estado inicial ─── */
+.scanner-upload-zone {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed hsl(255, 60%, 88%);
+  border-radius: 28px;
+  background: linear-gradient(145deg, hsl(255, 60%, 99%), hsl(30, 20%, 99%));
+  padding: 40px 24px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  margin-bottom: 20px;
+  overflow: hidden;
+  min-height: 220px;
+}
+
+.scanner-upload-zone::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 0%, hsl(255, 60%, 97%), transparent 70%);
+  pointer-events: none;
+}
+
+.scanner-upload-zone:hover {
+  border-color: var(--color-primary);
+  background: linear-gradient(145deg, hsl(255, 60%, 98%), hsl(30, 20%, 99%));
+  box-shadow: 0 8px 32px rgba(123, 97, 255, 0.08);
+  transform: translateY(-2px);
+}
+
+.scanner-upload-zone:active {
+  transform: scale(0.99);
+}
+
+/* Ícone de câmera premium */
+.scanner-camera-icon-wrapper {
+  width: 80px;
+  height: 80px;
+  border-radius: 28px;
+  background: linear-gradient(135deg, var(--color-primary), hsl(270, 60%, 75%));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  box-shadow: 0 12px 32px rgba(123, 97, 255, 0.22), 0 4px 12px rgba(123, 97, 255, 0.14);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  z-index: 1;
+}
+
+.scanner-upload-zone:hover .scanner-camera-icon-wrapper {
+  transform: scale(1.06);
+}
+
+.scanner-camera-icon-wrapper svg {
+  color: #fff;
+}
+
+.scanner-upload-cta-title {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.3px;
+  position: relative;
+  z-index: 1;
+}
+
+.scanner-upload-cta-sub {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Botão secundário de upload */
+.scanner-secondary-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border-radius: 16px;
+  border: 1.5px solid var(--border-subtle);
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  justify-content: center;
+  transition: all 0.2s ease;
+  margin-bottom: 28px;
+}
+
+.scanner-secondary-btn:hover {
+  border-color: hsl(255, 60%, 80%);
+  color: var(--color-primary);
+}
+
+.scanner-secondary-btn:active {
+  transform: scale(0.98);
+  background: var(--bg-main);
+}
+
+/* ─── Estado de Preview de Imagem ─── */
+.scanner-preview-wrapper {
+  position: relative;
+  border-radius: 24px;
+  overflow: hidden;
+  margin-bottom: 16px;
+  aspect-ratio: 4/3;
+  background: var(--bg-input);
+}
+
+.scanner-preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.scanner-preview-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.45) 0%, transparent 50%);
+}
+
+.scanner-preview-label {
+  position: absolute;
+  bottom: 14px;
+  left: 14px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.scanner-preview-change-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-primary);
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+}
+
+/* Botão de análise */
+.scanner-analyze-btn {
+  width: 100%;
+  padding: 18px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, var(--color-primary), hsl(270, 60%, 72%));
+  border: none;
+  color: var(--text-primary);
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: 0 8px 28px rgba(123, 97, 255, 0.2);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  letter-spacing: -0.2px;
+  margin-bottom: 20px;
+}
+
+.scanner-analyze-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 36px rgba(123, 97, 255, 0.28);
+}
+
+.scanner-analyze-btn:active {
+  transform: scale(0.98);
+}
+
+/* ─── Loading de IA Cinematográfico ─── */
+.scanner-loading-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 0 24px;
+  animation: fadeIn 0.4s ease forwards;
+}
+
+.scanner-scan-image-wrapper {
+  position: relative;
+  border-radius: 24px;
+  overflow: hidden;
+  width: 100%;
+  aspect-ratio: 4/3;
+  background: var(--bg-input);
+  margin-bottom: 24px;
+}
+
+.scanner-scan-image-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: brightness(0.85) saturate(1.1);
+}
+
+/* Linha de scan animada */
+.scanner-laser-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(123, 97, 255, 0.4) 20%,
+    rgba(123, 97, 255, 0.9) 50%,
+    rgba(123, 97, 255, 0.4) 80%,
+    transparent 100%
+  );
+  box-shadow: 0 0 12px rgba(123, 97, 255, 0.6), 0 0 32px rgba(123, 97, 255, 0.3);
+  animation: laserScan 1.8s ease-in-out infinite;
+  z-index: 5;
+}
+
+@keyframes laserScan {
+  0% { top: 0%; opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+/* Overlay de análise */
+.scanner-analyzing-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(20, 16, 40, 0.2);
+}
+
+/* Pontos de análise IA (bolhas de detecção) */
+.scanner-ai-dot {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid rgba(123, 97, 255, 0.8);
+  background: rgba(123, 97, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  backdrop-filter: blur(4px);
+  animation: dotAppear 0.4s ease forwards;
+  opacity: 0;
+}
+
+@keyframes dotAppear {
+  from { opacity: 0; transform: scale(0.5); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Área de texto do loading */
+.scanner-loading-text-area {
+  text-align: center;
+  width: 100%;
+}
+
+.scanner-loading-step-text {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.3px;
+  margin-bottom: 6px;
+  animation: fadeSlideUp 0.4s ease forwards;
+}
+
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.scanner-loading-step-sub {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+}
+
+/* Barra de progresso de análise */
+.scanner-progress-track {
+  width: 100%;
+  height: 6px;
+  background: var(--bg-input);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.scanner-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-primary), hsl(270, 60%, 72%));
+  border-radius: 3px;
+  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 0 10px rgba(123, 97, 255, 0.4);
+}
+
+/* ─── RESULTADO DA ANÁLISE ─── */
+.scanner-result-wrapper {
+  animation: scaleInResult 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes scaleInResult {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Imagem do resultado */
+.scanner-result-image-wrapper {
+  position: relative;
+  border-radius: 24px;
+  overflow: hidden;
+  aspect-ratio: 4/3;
+  margin-bottom: 20px;
+}
+
+.scanner-result-image-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.scanner-result-image-gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 55%);
+}
+
+.scanner-result-meal-name {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  right: 60px;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  line-height: 1.25;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.scanner-result-calories-badge {
+  position: absolute;
+  bottom: 14px;
+  right: 14px;
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 14px;
+  padding: 6px 10px;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--color-primary);
+  backdrop-filter: blur(8px);
+  letter-spacing: -0.2px;
+}
+
+/* Badge IA */
+.scanner-ai-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--color-primary);
+  background: hsl(255, 60%, 96%);
+  border-radius: 20px;
+  padding: 4px 10px;
+  margin-bottom: 16px;
+}
+
+/* Card de macronutrientes */
+.scanner-macros-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.scanner-macro-card {
+  background: var(--bg-card);
+  border-radius: 18px;
+  padding: 16px 12px;
+  text-align: center;
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.02);
+  animation: macroCardIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+}
+
+.scanner-macro-card:nth-child(1) { animation-delay: 0.1s; }
+.scanner-macro-card:nth-child(2) { animation-delay: 0.2s; }
+.scanner-macro-card:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes macroCardIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.scanner-macro-emoji {
+  font-size: 20px;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.scanner-macro-value {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.5px;
+  line-height: 1;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.scanner-macro-unit {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+}
+
+.scanner-macro-label {
+  font-size: 11.5px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+  font-weight: 600;
+}
+
+/* Card principal de calorias */
+.scanner-calories-card {
+  background: linear-gradient(135deg, var(--color-primary), hsl(270, 60%, 72%));
+  border-radius: 22px;
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  box-shadow: 0 8px 28px rgba(123, 97, 255, 0.2);
+  animation: macroCardIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.scanner-calories-left {
+  display: flex;
+  flex-direction: column;
+}
+
+.scanner-calories-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(30, 24, 60, 0.65);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 4px;
+}
+
+.scanner-calories-number {
+  font-size: 42px;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -2px;
+  line-height: 1;
+}
+
+.scanner-calories-unit {
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(30, 24, 60, 0.6);
+  margin-top: 2px;
+}
+
+.scanner-calories-ring {
+  width: 56px;
+  height: 56px;
+  position: relative;
+}
+
+.scanner-calories-ring svg {
+  transform: rotate(-90deg);
+}
+
+/* Card de feedback da IA */
+.scanner-feedback-card {
+  background: var(--bg-card);
+  border-radius: 20px;
+  padding: 18px;
+  border: 1px solid var(--border-subtle);
+  margin-bottom: 20px;
+  animation: macroCardIn 0.4s 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+}
+
+.scanner-feedback-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.scanner-feedback-icon {
+  font-size: 16px;
+}
+
+.scanner-feedback-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.scanner-feedback-text {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+
+.scanner-feedback-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.scanner-feedback-tag {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11.5px;
+  font-weight: 600;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-main);
+  color: var(--text-secondary);
+}
+
+/* ─── Botões de ação do resultado ─── */
+.scanner-result-actions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+
+.scanner-save-btn {
+  flex: 1;
+  padding: 15px;
+  border-radius: 18px;
+  background: var(--color-primary);
+  border: none;
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 16px rgba(123, 97, 255, 0.15);
+}
+
+.scanner-save-btn:active { transform: scale(0.97); }
+
+.scanner-retry-btn {
+  flex: 1;
+  padding: 15px;
+  border-radius: 18px;
+  background: transparent;
+  border: 1.5px solid var(--border-subtle);
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.scanner-retry-btn:active { transform: scale(0.97); }
+
+/* ─── Seção de Histórico ─── */
+.scanner-history-section {
+  margin-top: 8px;
+}
+
+.scanner-history-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 14px;
+}
+
+.scanner-history-empty {
+  text-align: center;
+  padding: 24px 16px;
+  background: var(--bg-card);
+  border-radius: 20px;
+  border: 1px dashed var(--border-subtle);
+}
+
+.scanner-history-empty-text {
+  font-size: 13px;
+  color: var(--text-tertiary);
+  margin-top: 8px;
+}
+
+.scanner-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.scanner-history-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--bg-card);
+  border-radius: 18px;
+  padding: 12px 14px;
+  border: 1px solid var(--border-subtle);
+  animation: macroCardIn 0.3s ease forwards;
+}
+
+.scanner-history-thumb {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: var(--bg-input);
+}
+
+.scanner-history-thumb-placeholder {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, hsl(255, 60%, 94%), hsl(255, 60%, 98%));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.scanner-history-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.scanner-history-meal-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.scanner-history-macros-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 3px;
+}
+
+.scanner-history-macro-pill {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+}
+
+.scanner-history-calories {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+/* ─── Animação global fadeIn ─── */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Input escondido de arquivo */
+.scanner-file-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}

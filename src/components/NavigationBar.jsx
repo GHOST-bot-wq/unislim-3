@@ -2,15 +2,14 @@ import React, { useContext } from 'react';
 import { AppContext } from '../context/AppContext';
 
 const NavigationBar = () => {
-  const { activeTab, setActiveTab, goals } = useContext(AppContext);
+  const { activeTab, setActiveTab, adjustedGoals } = useContext(AppContext);
 
-  // Se as metas não estiverem configuradas, oculta a barra de navegação
-  if (!goals.isSet) return null;
+  const themeColor = adjustedGoals?.toneColor || 'var(--color-primary)';
 
-  const tabs = [
+  const leftTabs = [
     {
       id: 'home',
-      label: 'Espaço',
+      label: 'Hoje',
       icon: (
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
           <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
@@ -20,28 +19,22 @@ const NavigationBar = () => {
     },
     {
       id: 'plan',
-      label: 'Cuidado',
+      label: 'Rotina',
       icon: (
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M12 2a10 10 0 1 0 10 10H12z" />
-          <path d="M12 2a10 10 0 0 1 10 10h-2a8 8 0 0 0-8-8z" />
-          <path d="M12 12V2" />
-          <path d="M16.2 16.2 12 12" />
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+          <line x1="16" y1="2" x2="16" y2="6" />
+          <line x1="8" y1="2" x2="8" y2="6" />
+          <line x1="3" y1="10" x2="21" y2="10" />
         </svg>
       )
-    },
-    {
-      id: 'checkin',
-      label: 'Sintonia',
-      icon: (
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-        </svg>
-      )
-    },
+    }
+  ];
+
+  const rightTabs = [
     {
       id: 'progress',
-      label: 'Evolução',
+      label: 'Progresso',
       icon: (
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M12 20V10" />
@@ -49,21 +42,102 @@ const NavigationBar = () => {
           <path d="M6 20v-4" />
         </svg>
       )
+    },
+    {
+      id: 'profile',
+      label: 'Perfil',
+      icon: (
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+          <circle cx="12" cy="7" r="4" />
+        </svg>
+      )
     }
   ];
 
+  const isScannerActive = activeTab === 'scanner';
+
   return (
-    <div className="nav-bar">
-      {tabs.map(tab => {
+    <div className="nav-bar" style={{ position: 'relative' }}>
+      {/* Abas da esquerda */}
+      {leftTabs.map(tab => {
         const isActive = activeTab === tab.id;
         return (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={`nav-item ${isActive ? 'active' : ''}`}
+            style={{ color: isActive ? themeColor : 'var(--text-tertiary)' }}
             aria-label={tab.label}
           >
-            <div className="icon-wrapper">{tab.icon}</div>
+            <div className="icon-wrapper" style={{ stroke: isActive ? themeColor : 'currentColor' }}>{tab.icon}</div>
+            <span className="nav-label">{tab.label}</span>
+          </button>
+        );
+      })}
+
+      {/* Botão central de câmera — Scanner */}
+      <button
+        onClick={() => setActiveTab('scanner')}
+        aria-label="Scanner de refeições"
+        style={{
+          position: 'relative',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'flex-end',
+          paddingBottom: '6px',
+          flex: 1,
+          background: 'none',
+          border: 'none',
+          cursor: 'pointer',
+        }}
+      >
+        {/* Bolão central flutuante */}
+        <div style={{
+          position: 'absolute',
+          top: '-20px',
+          width: '56px',
+          height: '56px',
+          borderRadius: '20px',
+          background: isScannerActive
+            ? `linear-gradient(135deg, ${themeColor}, hsl(270,60%,72%))`
+            : 'linear-gradient(135deg, var(--color-primary), hsl(270,60%,72%))',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          boxShadow: isScannerActive
+            ? '0 8px 24px rgba(123,97,255,0.35), 0 0 0 4px rgba(123,97,255,0.1)'
+            : '0 6px 20px rgba(123,97,255,0.25)',
+          transition: 'all 0.3s cubic-bezier(0.16,1,0.3,1)',
+          transform: isScannerActive ? 'scale(1.08)' : 'scale(1)',
+        }}>
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="hsl(30,8%,15%)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z" />
+            <circle cx="12" cy="13" r="3" />
+          </svg>
+        </div>
+        <span style={{
+          fontSize: '10px',
+          fontWeight: '700',
+          color: isScannerActive ? themeColor : 'var(--text-tertiary)',
+          letterSpacing: '0.2px',
+          marginTop: '4px',
+        }}>Scanner</span>
+      </button>
+
+      {/* Abas da direita */}
+      {rightTabs.map(tab => {
+        const isActive = activeTab === tab.id;
+        return (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className={`nav-item ${isActive ? 'active' : ''}`}
+            style={{ color: isActive ? themeColor : 'var(--text-tertiary)' }}
+            aria-label={tab.label}
+          >
+            <div className="icon-wrapper" style={{ stroke: isActive ? themeColor : 'currentColor' }}>{tab.icon}</div>
             <span className="nav-label">{tab.label}</span>
           </button>
         );

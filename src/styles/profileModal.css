@@ -1,0 +1,372 @@
+/* ────────────────────────────────────────────────────────
+   profileModal.css — Estilização do Modal de Perfil Premium
+   ──────────────────────────────────────────────────────── */
+
+.profile-modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(29, 28, 26, 0.4);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  z-index: 1000;
+  animation: fadeInOverlay 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeInOverlay {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.profile-modal-card {
+  width: 100%;
+  max-height: 85%;
+  background-color: var(--bg-card);
+  border-radius: 36px 36px 0 0;
+  padding: 30px 24px 40px;
+  box-shadow: 0 -15px 40px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  overflow-y: auto;
+  scrollbar-width: none;
+  position: relative;
+  animation: slideUpCard 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.profile-modal-card::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes slideUpCard {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+/* Indicador de arrastar sutil no topo do modal */
+.profile-modal-drag-bar {
+  width: 36px;
+  height: 5px;
+  background-color: var(--text-tertiary);
+  opacity: 0.3;
+  border-radius: var(--border-radius-pill);
+  align-self: center;
+  margin-top: -10px;
+  margin-bottom: 4px;
+}
+
+.profile-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.profile-modal-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: var(--text-primary);
+}
+
+.btn-close-modal {
+  background: rgba(0, 0, 0, 0.04);
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: bold;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.btn-close-modal:active {
+  transform: scale(0.9);
+  background-color: rgba(0, 0, 0, 0.08);
+}
+
+/* ────────────────────────────────────────────────────────
+   SEÇÕES DE FORMULÁRIO
+   ──────────────────────────────────────────────────────── */
+.profile-form-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.profile-form-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-tertiary);
+}
+
+/* SELETOR DE AVATAR / EMOJI */
+.avatar-picker-grid {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 4px 2px;
+  scrollbar-width: none;
+}
+
+.avatar-picker-grid::-webkit-scrollbar {
+  display: none;
+}
+
+.avatar-option-btn {
+  width: 46px;
+  height: 46px;
+  border-radius: 16px;
+  background-color: var(--bg-main);
+  border: 2.2px solid transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.25s ease, background-color 0.25s ease;
+}
+
+.avatar-option-btn:active {
+  transform: scale(0.9);
+}
+
+.avatar-option-btn.selected {
+  background-color: var(--color-primary-light);
+  border-color: var(--color-primary);
+  transform: scale(1.05);
+}
+
+/* CAMPOS DE TEXTO E NÚMEROS */
+.profile-input-text {
+  width: 100%;
+  padding: 15px 18px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  background-color: var(--bg-main);
+  border: 1px solid transparent;
+  border-radius: 16px;
+  outline: none;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.profile-input-text:focus {
+  background-color: var(--bg-card);
+  border-color: var(--color-primary);
+}
+
+.profile-inputs-row {
+  display: flex;
+  gap: 12px;
+}
+
+.profile-inputs-row .input-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.profile-input-number {
+  width: 100%;
+  padding: 15px;
+  font-size: 16px;
+  font-weight: 700;
+  font-family: 'Outfit', sans-serif;
+  text-align: center;
+  color: var(--text-primary);
+  background-color: var(--bg-main);
+  border: 1px solid transparent;
+  border-radius: 16px;
+  outline: none;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.profile-input-number:focus {
+  background-color: var(--bg-card);
+  border-color: var(--color-primary);
+}
+
+/* SELETOR DE OBJETIVO (CARDS) */
+.objective-pills-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.objective-pill-btn {
+  width: 100%;
+  padding: 14px 18px;
+  background-color: var(--bg-main);
+  border: 1.5px solid transparent;
+  border-radius: 16px;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.25s ease, background-color 0.25s ease;
+  outline: none;
+}
+
+.objective-pill-btn:active {
+  transform: scale(0.98);
+}
+
+.objective-pill-btn.selected {
+  background-color: var(--color-primary-light);
+  border-color: var(--color-primary);
+}
+
+.objective-pill-btn .label {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.objective-pill-btn .desc {
+  font-size: 11.5px;
+  color: var(--text-secondary);
+}
+
+.objective-pill-btn .indicator {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1.5px solid var(--text-tertiary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.objective-pill-btn.selected .indicator {
+  border-color: var(--color-primary);
+  background-color: var(--color-primary);
+}
+
+/* SELETOR DE TEMA EMOCIONAL */
+.theme-picker-row {
+  display: flex;
+  gap: 10px;
+}
+
+.theme-card-option {
+  flex: 1;
+  padding: 16px 12px;
+  border-radius: 18px;
+  border: 1.5px solid transparent;
+  background-color: var(--bg-main);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+  transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.25s ease, background-color 0.25s ease;
+}
+
+.theme-card-option:active {
+  transform: scale(0.94);
+}
+
+.theme-card-option.selected {
+  background-color: #ffffff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+}
+
+.theme-card-option.selected.calm {
+  border-color: hsl(255, 65%, 65%);
+}
+.theme-card-option.selected.focus {
+  border-color: hsl(205, 75%, 60%);
+}
+.theme-card-option.selected.energy {
+  border-color: hsl(20, 85%, 65%);
+}
+
+.theme-color-preview {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.03);
+}
+
+.theme-color-preview.calm {
+  background: linear-gradient(135deg, hsl(255, 65%, 65%), hsl(255, 60%, 95%));
+}
+.theme-color-preview.focus {
+  background: linear-gradient(135deg, hsl(205, 75%, 60%), hsl(205, 60%, 93%));
+}
+.theme-color-preview.energy {
+  background: linear-gradient(135deg, hsl(20, 85%, 65%), hsl(20, 80%, 94%));
+}
+
+.theme-card-option .name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.theme-card-option .mood {
+  font-size: 10px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* BOTÃO DE SALVAR ALTERAÇÕES */
+.btn-save-profile {
+  margin-top: 10px;
+  width: 100%;
+  padding: 18px;
+  border-radius: 20px;
+  border: none;
+  background: var(--color-primary);
+  color: #ffffff;
+  font-family: 'Outfit', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 10px 25px rgba(123, 97, 255, 0.15);
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
+}
+
+.btn-save-profile:hover {
+  transform: translateY(-1px);
+}
+
+.btn-save-profile:active {
+  transform: scale(0.97);
+}
+
+.btn-reset-onboarding {
+  width: 100%;
+  padding: 14px;
+  border-radius: 18px;
+  border: 1px dashed rgba(244, 160, 144, 0.4);
+  background-color: transparent;
+  color: hsl(24, 75%, 55%);
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  margin-top: -6px;
+}
+
+.btn-reset-onboarding:active {
+  background-color: rgba(244, 160, 144, 0.05);
+}
