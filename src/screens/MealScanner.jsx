@@ -111,6 +111,7 @@ const MealScanner = () => {
   // Estados principais
   const [phase, setPhase] = useState('idle'); // idle | preview | loading | result
   const [imagePreview, setImagePreview] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
   const [loadingStep, setLoadingStep] = useState(0);
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [result, setResult] = useState(null);
@@ -124,6 +125,7 @@ const MealScanner = () => {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    setSelectedFile(file);
     const reader = new FileReader();
     reader.onloadend = () => {
       setImagePreview(reader.result);
@@ -168,13 +170,14 @@ const MealScanner = () => {
       emoji: result.emoji,
       imageData: imagePreview,
       date: new Date().toISOString()
-    });
+    }, selectedFile);
     setSaved(true);
   };
 
   const handleReset = () => {
     setPhase('idle');
     setImagePreview(null);
+    setSelectedFile(null);
     setResult(null);
     setSaved(false);
     setLoadingStep(0);

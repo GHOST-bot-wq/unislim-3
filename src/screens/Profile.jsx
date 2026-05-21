@@ -1,5 +1,6 @@
 import React, { useContext, useState, useRef } from 'react';
 import { AppContext } from '../context/AppContext';
+import useAuth from '../hooks/useAuth';
 import ProfileCard from '../components/ProfileCard';
 import GoalCard from '../components/GoalCard';
 import ThemeSelector from '../components/ThemeSelector';
@@ -77,20 +78,19 @@ const Profile = () => {
     }
   };
 
-  const handleLogout = () => {
-    alert("Sessão encerrada (Modo de Demonstração).");
+  const { logout } = useAuth();
+
+  const handleLogout = async () => {
+    if (window.confirm("Deseja realmente sair da sua conta?")) {
+      await logout();
+    }
   };
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setProfileImage(reader.result);
-      setShowPhotoOptions(false);
-    };
-    reader.readAsDataURL(file);
+    setProfileImage(file);
+    setShowPhotoOptions(false);
   };
 
   const getAvatarContent = () => {

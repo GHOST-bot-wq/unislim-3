@@ -1,0 +1,396 @@
+import { createClient } from '@supabase/supabase-js';
+
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+
+// Verifica se as credenciais do Supabase parecem válidas (não são os placeholders do .env)
+const isConfigured = 
+  supabaseUrl && 
+  supabaseAnonKey && 
+  !supabaseUrl.includes('your-project') && 
+  !supabaseAnonKey.includes('your-anon-key');
+
+let supabaseInstance = null;
+
+if (isConfigured) {
+  try {
+    supabaseInstance = createClient(supabaseUrl, supabaseAnonKey);
+    console.log('⚡ Supabase configurado e inicializado com sucesso.');
+  } catch (error) {
+    console.error('❌ Falha ao inicializar o Supabase:', error);
+  }
+}
+
+if (!supabaseInstance) {
+  console.warn(
+    '⚠️ Supabase não configurado ou chaves inválidas. O UniSlim está rodando em modo Mock Premium (dados salvos no LocalStorage).'
+  );
+  
+  // Criar um mock elegante do Supabase client para o app não quebrar
+  supabaseInstance = {
+    auth: {
+      getSession: async () => {
+        const sessionJson = localStorage.getItem('unislim_mock_session');
+        const session = sessionJson ? JSON.parse(sessionJson) : null;
+        return { data: { session }, error: null };
+      },
+      onAuthStateChange: (callback) => {
+        const handleStorageChange = () => {
+          const sessionJson = localStorage.getItem('unislim_mock_session');
+          const session = sessionJson ? JSON.parse(sessionJson) : null;
+          callback(session ? 'SIGNED_IN' : 'SIGNED_OUT', session);
+        };
+        window.addEventListener('storage', handleStorageChange);
+        // Disparar inicialmente
+        setTimeout(handleStorageChange, 50);
+        return {
+          data: {
+            subscription: {
+              unsubscribe: () => {
+                window.removeEventListener('storage', handleStorageChange);
+              }
+            }
+          }
+        };
+      },
+      signInWithPassword: async ({ email, password }) => {
+        await new Promise(resolve => setTimeout(resolve, 800)); // Simula latência de rede
+        
+        // Verifica se o usuário existe no localStorage
+        const users = JSON.parse(localStorage.getItem('unislim_mock_users') || '[]');
+        const user = users.find(u => u.email === email && u.password === password);
+        
+        if (!user) {
+          return { data: { user: null, session: null }, error: { message: 'E-mail ou senha inválidos.' } };
+        }
+        
+        const session = {
+          access_token: 'mock-token-' + Date.now(),
+          user: {
+            id: user.id,
+            email: user.email,
+            user_metadata: user.user_metadata
+          }
+        };
+        
+        localStorage.setItem('unislim_mock_session', JSON.stringify(session));
+        // Força atualização da auth
+        window.dispatchEvent(new Event('storage'));
+        
+        return { data: { user: session.user, session }, error: null };
+      },
+      signUp: async ({ email, password, options }) => {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        const users = JSON.parse(localStorage.getItem('unislim_mock_users') || '[]');
+        if (users.find(u => u.email === email)) {
+          return { data: { user: null }, error: { message: 'Este e-mail já está cadastrado.' } };
+        }
+        
+        const userId = 'mock-uid-' + Math.random().toString(36).substr(2, 9);
+        const newUser = {
+          id: userId,
+          email,
+          password,
+          user_metadata: options?.data || {}
+        };
+        
+        users.push(newUser);
+        localStorage.setItem('unislim_mock_users', JSON.stringify(users));
+        
+        // Cria automaticamente o profile correspondente no mock
+        const profiles = JSON.parse(localStorage.getItem('unislim_mock_profiles') || '{}');
+        profiles[userId] = {
+          id: userId,
+          created_at: new Date().toISOString(),
+          full_name: options?.data?.full_name || email.split('@')[0],
+          avatar_url: options?.data?.avatar_url || '',
+          theme: 'calm',
+          streak_days: 0
+        };
+        localStorage.setItem('unislim_mock_profiles', JSON.stringify(profiles));
+        
+        // Login automático após cadastro
+        const session = {
+          access_token: 'mock-token-' + Date.now(),
+          user: {
+            id: userId,
+            email,
+            user_metadata: newUser.user_metadata
+          }
+        };
+        
+        localStorage.setItem('unislim_mock_session', JSON.stringify(session));
+        window.dispatchEvent(new Event('storage'));
+        
+        return { data: { user: session.user, session }, error: null };
+      },
+      signOut: async () => {
+        localStorage.removeItem('unislim_mock_session');
+        window.dispatchEvent(new Event('storage'));
+        return { error: null };
+      }
+    },
+    // Mock simples do Database query builder
+    from: (table) => {
+      const getSessionUser = () => {
+        const sessionJson = localStorage.getItem('unislim_mock_session');
+        const session = sessionJson ? JSON.parse(sessionJson) : null;
+        return session?.user;
+      };
+
+      const getTableData = () => {
+        try {
+          return JSON.parse(localStorage.getItem(`unislim_mock_${table}`) || '[]');
+        } catch {
+          return [];
+        }
+      };
+
+      const saveTableData = (data) => {
+        localStorage.setItem(`unislim_mock_${table}`, JSON.stringify(data));
+      };
+
+      // Query Builder Mock
+      const query = {
+        select: (columns = '*') => {
+          query._action = 'select';
+          return query;
+        },
+        insert: (rows) => {
+          query._action = 'insert';
+          query._payload = rows;
+          return query;
+        },
+        update: (values) => {
+          query._action = 'update';
+          query._payload = values;
+          return query;
+        },
+        delete: () => {
+          query._action = 'delete';
+          return query;
+        },
+        upsert: (rows) => {
+          query._action = 'upsert';
+          query._payload = rows;
+          return query;
+        },
+        eq: (col, val) => {
+          query._filters = query._filters || [];
+          query._filters.push({ col, val, op: 'eq' });
+          return query;
+        },
+        order: (col, { ascending = true } = {}) => {
+          query._sort = { col, ascending };
+          return query;
+        },
+        single: () => {
+          query._single = true;
+          return query;
+        },
+        maybeSingle: () => {
+          query._maybeSingle = true;
+          return query;
+        },
+        // Executores
+        then: async (resolve, reject) => {
+          try {
+            const user = getSessionUser();
+            if (!user && table !== 'profiles') {
+              resolve({ data: null, error: { message: 'Não autorizado.' } });
+              return;
+            }
+
+            const data = getTableData();
+            let result = null;
+            let error = null;
+
+            // Filtros básicos
+            let filtered = [...data];
+            
+            // Tratamento especial para tabelas de dicionário de chaves (ex: profiles pode ser armazenado como dict ou list)
+            if (table === 'profiles') {
+              const profilesDict = JSON.parse(localStorage.getItem('unislim_mock_profiles') || '{}');
+              filtered = Object.values(profilesDict);
+            }
+
+            if (query._filters) {
+              for (const f of query._filters) {
+                filtered = filtered.filter(row => row[f.col] === f.val);
+              }
+            }
+
+            if (query._sort) {
+              const { col, ascending } = query._sort;
+              filtered.sort((a, b) => {
+                if (a[col] < b[col]) return ascending ? -1 : 1;
+                if (a[col] > b[col]) return ascending ? 1 : -1;
+                return 0;
+              });
+            }
+
+            if (query._action === 'select') {
+              if (query._single || query._maybeSingle) {
+                result = filtered[0] || null;
+              } else {
+                result = filtered;
+              }
+            } else if (query._action === 'insert') {
+              const payload = Array.isArray(query._payload) ? query._payload : [query._payload];
+              const toInsert = payload.map(item => ({
+                id: item.id || 'mock-id-' + Math.random().toString(36).substr(2, 9),
+                created_at: new Date().toISOString(),
+                user_id: user?.id,
+                ...item
+              }));
+              
+              if (table === 'profiles') {
+                const profilesDict = JSON.parse(localStorage.getItem('unislim_mock_profiles') || '{}');
+                toInsert.forEach(p => {
+                  profilesDict[p.id] = p;
+                });
+                localStorage.setItem('unislim_mock_profiles', JSON.stringify(profilesDict));
+              } else {
+                const newData = [...data, ...toInsert];
+                saveTableData(newData);
+              }
+              result = query._single || query._maybeSingle ? toInsert[0] : toInsert;
+            } else if (query._action === 'update') {
+              // Atualiza linhas correspondentes
+              let updatedCount = 0;
+              
+              if (table === 'profiles') {
+                const profilesDict = JSON.parse(localStorage.getItem('unislim_mock_profiles') || '{}');
+                // Encontrar o id no filtro
+                const idFilter = query._filters?.find(f => f.col === 'id')?.val;
+                if (idFilter && profilesDict[idFilter]) {
+                  profilesDict[idFilter] = { ...profilesDict[idFilter], ...query._payload };
+                  localStorage.setItem('unislim_mock_profiles', JSON.stringify(profilesDict));
+                  result = profilesDict[idFilter];
+                  updatedCount = 1;
+                }
+              } else {
+                const updatedData = data.map(row => {
+                  let match = true;
+                  if (query._filters) {
+                    for (const f of query._filters) {
+                      if (row[f.col] !== f.val) match = false;
+                    }
+                  }
+                  if (match) {
+                    updatedCount++;
+                    return { ...row, ...query._payload };
+                  }
+                  return row;
+                });
+                
+                if (updatedCount > 0) {
+                  saveTableData(updatedData);
+                  result = query._payload;
+                }
+              }
+              
+              if (updatedCount === 0) {
+                error = { message: 'Nenhum registro encontrado para atualização.' };
+              }
+            } else if (query._action === 'upsert') {
+              const payload = Array.isArray(query._payload) ? query._payload : [query._payload];
+              
+              if (table === 'profiles') {
+                const profilesDict = JSON.parse(localStorage.getItem('unislim_mock_profiles') || '{}');
+                payload.forEach(item => {
+                  const key = item.id || user?.id;
+                  profilesDict[key] = {
+                    id: key,
+                    created_at: new Date().toISOString(),
+                    ...profilesDict[key],
+                    ...item
+                  };
+                });
+                localStorage.setItem('unislim_mock_profiles', JSON.stringify(profilesDict));
+                result = payload;
+              } else {
+                // Upsert genérico baseado no id ou user_id + created_at (para daily_logs)
+                const currentData = [...data];
+                const upserted = payload.map(item => {
+                  let existingIndex = -1;
+                  if (item.id) {
+                    existingIndex = currentData.findIndex(r => r.id === item.id);
+                  } else if (item.user_id && item.created_at) {
+                    existingIndex = currentData.findIndex(r => r.user_id === item.user_id && r.created_at === item.created_at);
+                  }
+                  
+                  const row = {
+                    id: item.id || 'mock-id-' + Math.random().toString(36).substr(2, 9),
+                    created_at: new Date().toISOString(),
+                    user_id: user?.id,
+                    ...item
+                  };
+                  
+                  if (existingIndex > -1) {
+                    currentData[existingIndex] = { ...currentData[existingIndex], ...row };
+                  } else {
+                    currentData.push(row);
+                  }
+                  return row;
+                });
+                saveTableData(currentData);
+                result = query._single || query._maybeSingle ? upserted[0] : upserted;
+              }
+            }
+
+            resolve({ data: result, error });
+          } catch (e) {
+            resolve({ data: null, error: { message: e.message } });
+          }
+        }
+      };
+      return query;
+    },
+    // Mock do Storage
+    storage: {
+      from: (bucket) => ({
+        upload: async (filePath, file, options) => {
+          await new Promise(resolve => setTimeout(resolve, 1500)); // Simula o upload
+          
+          // No ambiente local, transformamos o arquivo em data URL para visualização instantânea
+          return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+              const fileKey = `${bucket}_${filePath}`;
+              localStorage.setItem(`unislim_mock_file_${fileKey}`, reader.result);
+              resolve({
+                data: { path: filePath },
+                error: null
+              });
+            };
+            reader.onerror = () => {
+              resolve({
+                data: null,
+                error: { message: 'Erro ao carregar o arquivo.' }
+              });
+            };
+            reader.readAsDataURL(file);
+          });
+        },
+        getPublicUrl: (filePath) => {
+          const fileKey = `avatars_${filePath}`; // Assume avatars por simplicidade ou faz dinâmico
+          const dataUrl = localStorage.getItem(`unislim_mock_file_avatars_${filePath}`) || 
+                           localStorage.getItem(`unislim_mock_file_meals_${filePath}`);
+          
+          // Se tiver salvo localmente, usa a data URL. Caso contrário, retorna um placeholder premium
+          if (dataUrl) {
+            return { data: { publicUrl: dataUrl } };
+          }
+          
+          // Retorna URL de imagem placeholder dependendo do caminho
+          return { data: { publicUrl: `https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80` } };
+        }
+      })
+    }
+  };
+}
+
+export const supabase = supabaseInstance;
+export default supabase;
