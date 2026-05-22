@@ -1,7 +1,20 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+// Sanitização robusta para evitar aspas ou espaços que possam quebrar a conexão
+let supabaseUrl = (import.meta.env.VITE_SUPABASE_URL || '').trim();
+let supabaseAnonKey = (import.meta.env.VITE_SUPABASE_ANON_KEY || '').trim();
+
+if (supabaseUrl.startsWith('"') && supabaseUrl.endsWith('"')) {
+  supabaseUrl = supabaseUrl.slice(1, -1).trim();
+} else if (supabaseUrl.startsWith("'") && supabaseUrl.endsWith("'")) {
+  supabaseUrl = supabaseUrl.slice(1, -1).trim();
+}
+
+if (supabaseAnonKey.startsWith('"') && supabaseAnonKey.endsWith('"')) {
+  supabaseAnonKey = supabaseAnonKey.slice(1, -1).trim();
+} else if (supabaseAnonKey.startsWith("'") && supabaseAnonKey.endsWith("'")) {
+  supabaseAnonKey = supabaseAnonKey.slice(1, -1).trim();
+}
 
 // Verifica se as credenciais do Supabase parecem válidas (não são os placeholders do .env)
 const isConfigured = 
@@ -10,12 +23,16 @@ const isConfigured =
   !supabaseUrl.includes('your-project') && 
   !supabaseAnonKey.includes('your-anon-key');
 
+console.log('🔌 [Supabase Connection] Tentando inicializar o cliente...');
+console.log('🔌 [Supabase Connection] SUPABASE URL:', supabaseUrl || 'NÃO CONFIGURADA');
+console.log('🔌 [Supabase Connection] KEY MASCARADA:', supabaseAnonKey ? `${supabaseAnonKey.substring(0, 15)}...` : 'NÃO CONFIGURADA');
+
 let supabaseInstance = null;
 
 if (isConfigured) {
   try {
     supabaseInstance = createClient(supabaseUrl, supabaseAnonKey);
-    console.log('⚡ Supabase configurado e inicializado com sucesso.');
+    console.log('⚡ SUPABASE CONNECTED - Conexão ativa com o banco em nuvem.');
   } catch (error) {
     console.error('❌ Falha ao inicializar o Supabase:', error);
   }

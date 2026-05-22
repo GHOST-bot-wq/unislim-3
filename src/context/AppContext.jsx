@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect, useContext } from 'react';
+import React, { createContext, useState, useEffect, useContext, useRef } from 'react';
 import { getAdjustedGoals } from '../utils/feedbackHelper';
 import { AuthContext } from './AuthContext';
 import profileService from '../services/profileService';
@@ -12,113 +12,226 @@ export const AppProvider = ({ children }) => {
   const { user } = useContext(AuthContext);
 
   // Estados locais com cache em localStorage (para uso offline/carregamento instantâneo)
+  const defaultGoals = {
+    name: 'Você',
+    weightCurrent: '75',
+    weightDesired: '68',
+    activityLevel: 'moderate',
+    mainGoal: 'lose_weight',
+    theme: 'calm',
+    avatar: '✨',
+    isSet: true
+  };
+
   const [goals, setGoals] = useState(() => {
-    const saved = localStorage.getItem('unislim_goals');
-    return saved ? JSON.parse(saved) : {
-      name: 'Você',
-      weightCurrent: '75',
-      weightDesired: '68',
-      activityLevel: 'moderate',
-      mainGoal: 'lose_weight',
-      theme: 'calm',
-      avatar: '✨',
-      isSet: true
-    };
+    try {
+      const saved = localStorage.getItem('unislim_goals');
+      if (saved && saved !== 'null' && saved !== 'undefined') {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed === 'object') {
+          return parsed;
+        }
+      }
+    } catch (e) {
+      console.warn('⚠️ [AppContext] Erro ao analisar unislim_goals do localStorage, usando defaults.');
+    }
+    return defaultGoals;
   });
 
   const [dailyPlan, setDailyPlan] = useState(() => {
-    const saved = localStorage.getItem('unislim_daily_plan');
     const today = new Date().toDateString();
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      if (parsed.date === today) return parsed;
-    }
-    return {
+    const defaultDailyPlan = {
       date: today,
       hydration: 0,
       walkMinutes: 0,
       mindfulEating: false,
       mentalPause: false
     };
+    try {
+      const saved = localStorage.getItem('unislim_daily_plan');
+      if (saved && saved !== 'null' && saved !== 'undefined') {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed === 'object' && parsed.date === today) {
+          return parsed;
+        }
+      }
+    } catch (e) {
+      console.warn('⚠️ [AppContext] Erro ao analisar unislim_daily_plan do localStorage.');
+    }
+    return defaultDailyPlan;
   });
 
   const [checkIns, setCheckIns] = useState(() => {
-    const saved = localStorage.getItem('unislim_checkins');
-    return saved ? JSON.parse(saved) : [];
+    try {
+      const saved = localStorage.getItem('unislim_checkins');
+      if (saved && saved !== 'null' && saved !== 'undefined') {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          return parsed;
+        }
+      }
+    } catch (e) {
+      console.warn('⚠️ [AppContext] Erro ao analisar unislim_checkins do localStorage.');
+    }
+    return [];
   });
 
   const [mealHistory, setMealHistory] = useState(() => {
-    const saved = localStorage.getItem('unislim_meals');
-    return saved ? JSON.parse(saved) : [];
+    try {
+      const saved = localStorage.getItem('unislim_meals');
+      if (saved && saved !== 'null' && saved !== 'undefined') {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          return parsed;
+        }
+      }
+    } catch (e) {
+      console.warn('⚠️ [AppContext] Erro ao analisar unislim_meals do localStorage.');
+    }
+    return [];
   });
 
   const [mealPlanState, setMealPlanState] = useState(() => {
-    const saved = localStorage.getItem('unislim_meal_plan_state');
     const today = new Date().toDateString();
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      if (parsed.date === today) return parsed;
+    const defaultMealPlanState = { date: today, completed: [] };
+    try {
+      const saved = localStorage.getItem('unislim_meal_plan_state');
+      if (saved && saved !== 'null' && saved !== 'undefined') {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed === 'object' && parsed.date === today && Array.isArray(parsed.completed)) {
+          return parsed;
+        }
+      }
+    } catch (e) {
+      console.warn('⚠️ [AppContext] Erro ao analisar unislim_meal_plan_state do localStorage.');
     }
-    return { date: today, completed: [] };
+    return defaultMealPlanState;
   });
 
   const [activeTab, setActiveTab] = useState('home');
   const [streak, setStreak] = useState(0);
   const [profileImage, setProfileImage] = useState('');
 
+  // Monitorar logout real para limpar dados locais
+  const prevUserRef = useRef(user);
+  useEffect(() => {
+    if (prevUserRef.current && !user) {
+      console.log('🚪 [AppContext] Logout detectado! Limpando dados na memória e no cache local...');
+      resetData();
+    }
+    prevUserRef.current = user;
+  }, [user]);
+
   // 1. EFEITO DE CARREGAMENTO DE DADOS DO SUPABASE APÓS LOGIN
   useEffect(() => {
     if (!user) {
-      // Se deslogar, resetamos os estados locais
+      // Se deslogar, resetamos os estados locais principais
+      console.log('🔌 [AppContext] Sem usuário logado. Resetando estados locais...');
       setProfileImage('');
       return;
     }
 
+    let isCurrent = true;
+
     const loadUserDataFromSupabase = async () => {
-      // A. Carregar Perfil (profiles)
-      const profResult = await profileService.getProfile(user.id);
-      if (profResult.success && profResult.data) {
-        const p = profResult.data;
-        const mappedGoals = {
-          name: p.full_name || 'Usuário',
-          weightCurrent: p.current_weight?.toString() || '75',
-          weightDesired: p.goal_weight?.toString() || '68',
-          activityLevel: 'moderate', // valor padrão ou mapeado
-          mainGoal: p.objective || 'lose_weight',
-          theme: p.theme || 'calm',
-          avatar: p.avatar_url ? '👤' : '✨',
-          isSet: true
-        };
-        setGoals(mappedGoals);
-        setProfileImage(p.avatar_url || '');
-        setStreak(p.streak_days || 0);
-        localStorage.setItem('unislim_goals', JSON.stringify(mappedGoals));
-      }
+      console.log('🔄 [AppContext] Carregando dados do Supabase para o usuário:', user.email);
+      
+      try {
+        // A. Carregar Perfil (profiles)
+        let profResult = await profileService.getProfile(user.id);
+        if (!isCurrent) return;
 
-      // B. Carregar Log Diário de Hábitos (daily_logs)
-      const logResult = await progressService.getOrCreateTodayLog(user.id);
-      if (logResult.success && logResult.data) {
-        const l = logResult.data;
-        const mappedPlan = {
-          date: new Date().toDateString(),
-          hydration: l.water_intake || 0,
-          walkMinutes: l.steps || 0, // Mapeamos caminhada leve nos steps por simplicidade
-          mindfulEating: l.completed || false, // Provisório
-          mentalPause: l.mood === 'calm'
-        };
-        setDailyPlan(mappedPlan);
-        localStorage.setItem('unislim_daily_plan', JSON.stringify(mappedPlan));
-      }
+        // Se a busca deu sucesso mas não encontrou o profile (data = null), criamos um profile resiliente local/nuvem
+        if (profResult.success && !profResult.data) {
+          console.log('⚠️ [AppContext] Profile não encontrado na tabela public.profiles. Tentando criar a partir de user_metadata...');
+          const meta = user.user_metadata || {};
+          const newProfile = {
+            id: user.id,
+            full_name: meta.full_name || user.email.split('@')[0],
+            avatar_url: meta.avatar_url || '',
+            age: parseInt(meta.age) || 25,
+            height: parseFloat(meta.height) || 1.75,
+            current_weight: parseFloat(meta.current_weight) || 75.0,
+            goal_weight: parseFloat(meta.goal_weight) || 68.0,
+            objective: meta.objective || 'lose_weight',
+            theme: 'calm',
+            streak_days: 0
+          };
 
-      // C. Carregar Histórico de Refeições (meal_scans)
-      const mealsResult = await scanService.getMealHistory(user.id);
-      if (mealsResult.success && mealsResult.data) {
-        setMealHistory(mealsResult.data);
-        localStorage.setItem('unislim_meals', JSON.stringify(mealsResult.data));
+          // Tenta inserir na tabela profiles usando o client logado
+          const { data: insertedData, error: insertError } = await profileService.updateProfile(user.id, newProfile);
+          if (!insertError) {
+            console.log('✅ [AppContext] Profile criado com sucesso via fallback de metadados.');
+            // Re-busca o perfil recém criado
+            profResult = await profileService.getProfile(user.id);
+          } else {
+            console.error('❌ [AppContext] Falha ao criar profile de fallback:', insertError);
+          }
+        }
+
+        if (profResult.success && profResult.data) {
+          const p = profResult.data;
+          const mappedGoals = {
+            name: p.full_name || 'Usuário',
+            weightCurrent: p.current_weight?.toString() || '75',
+            weightDesired: p.goal_weight?.toString() || '68',
+            activityLevel: 'moderate',
+            mainGoal: p.objective || 'lose_weight',
+            theme: p.theme || 'calm',
+            avatar: p.avatar_url ? '👤' : '✨',
+            isSet: true
+          };
+          setGoals(mappedGoals);
+          setProfileImage(p.avatar_url || '');
+          setStreak(p.streak_days || 0);
+          localStorage.setItem('unislim_goals', JSON.stringify(mappedGoals));
+          console.log('✅ [AppContext] Perfil do usuário carregado do Supabase:', p.full_name);
+        } else {
+          console.warn('⚠️ [AppContext] Falha ao carregar perfil:', profResult.error);
+        }
+
+        // B. Carregar Log Diário de Hábitos (daily_logs)
+        const logResult = await progressService.getOrCreateTodayLog(user.id);
+        if (!isCurrent) return;
+
+        if (logResult.success && logResult.data) {
+          const l = logResult.data;
+          const mappedPlan = {
+            date: new Date().toDateString(),
+            hydration: l.water_intake || 0,
+            walkMinutes: l.steps || 0, // Mapeamos caminhada leve nos steps por simplicidade
+            mindfulEating: l.completed || false, // Provisório
+            mentalPause: l.mood === 'calm'
+          };
+          setDailyPlan(mappedPlan);
+          localStorage.setItem('unislim_daily_plan', JSON.stringify(mappedPlan));
+          console.log('✅ [AppContext] Log diário de hábitos carregado do Supabase.');
+        } else {
+          console.warn('⚠️ [AppContext] Falha ao obter/criar log diário:', logResult.error);
+        }
+
+        // C. Carregar Histórico de Refeições (meal_scans)
+        const mealsResult = await scanService.getMealHistory(user.id);
+        if (!isCurrent) return;
+
+        if (mealsResult.success && mealsResult.data) {
+          const mealsArray = Array.isArray(mealsResult.data) ? mealsResult.data : [];
+          setMealHistory(mealsArray);
+          localStorage.setItem('unislim_meals', JSON.stringify(mealsArray));
+          console.log('✅ [AppContext] Histórico de refeições carregado do Supabase. Qtd:', mealsArray.length);
+        } else {
+          console.warn('⚠️ [AppContext] Falha ao buscar histórico de refeições:', mealsResult.error);
+        }
+      } catch (err) {
+        console.error('❌ [AppContext] Erro no carregamento de dados do Supabase:', err.message);
       }
     };
 
     loadUserDataFromSupabase();
+
+    return () => {
+      isCurrent = false;
+    };
   }, [user]);
 
   // Efeitos para persistência secundária local (localStorage)

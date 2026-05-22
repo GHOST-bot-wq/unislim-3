@@ -4,11 +4,12 @@ import './auth.css';
 const AuthLayout = ({ children }) => {
   return (
     <div className="auth-layout-container">
-      {/* 3 Orbs com glow desfocado no fundo para ar de luxo */}
+      {/* Orbs de glow cinematográficos no fundo para profundidade */}
       <div className="auth-ambient-glow">
         <div className="auth-glow-orb primary" />
         <div className="auth-glow-orb secondary" />
         <div className="auth-glow-orb tertiary" />
+        <div className="auth-glow-orb pink-glow" />
       </div>
       
       {/* Container de conteúdo */}

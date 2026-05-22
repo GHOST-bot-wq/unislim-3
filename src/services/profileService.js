@@ -18,18 +18,20 @@ export const profileService = {
     }
   },
 
-  // Atualizar perfil
+  // Atualizar/Salvar perfil (Upsert para garantir criação caso não exista)
   updateProfile: async (userId, profileData) => {
     try {
       const { data, error } = await supabase
         .from('profiles')
-        .update(profileData)
-        .eq('id', userId);
+        .upsert({
+          id: userId,
+          ...profileData
+        });
 
       if (error) throw error;
       return { success: true, data };
     } catch (error) {
-      console.error('Erro ao atualizar perfil:', error.message);
+      console.error('Erro ao atualizar/upsertar perfil:', error.message);
       return { success: false, error: error.message };
     }
   },
