@@ -16,12 +16,25 @@ if (supabaseAnonKey.startsWith('"') && supabaseAnonKey.endsWith('"')) {
   supabaseAnonKey = supabaseAnonKey.slice(1, -1).trim();
 }
 
-// Verifica se as credenciais do Supabase parecem válidas (não são os placeholders do .env)
+// Função auxiliar para validar se o token tem o formato de um JWT (padrão em chaves do Supabase)
+const isValidJWT = (token) => {
+  if (!token) return false;
+  return token.split('.').length === 3;
+};
+
+// Verifica se as credenciais do Supabase parecem válidas e se a chave anon é um JWT válido
 const isConfigured = 
   supabaseUrl && 
   supabaseAnonKey && 
   !supabaseUrl.includes('your-project') && 
-  !supabaseAnonKey.includes('your-anon-key');
+  !supabaseAnonKey.includes('your-anon-key') &&
+  isValidJWT(supabaseAnonKey);
+
+if (supabaseAnonKey && !isValidJWT(supabaseAnonKey)) {
+  console.warn(
+    '⚠️ [Supabase Connection] A chave anônima fornecida (VITE_SUPABASE_ANON_KEY) não é um JWT válido do Supabase. O aplicativo usará o modo Mock para evitar falhas.'
+  );
+}
 
 console.log('🔌 [Supabase Connection] Tentando inicializar o cliente...');
 console.log('🔌 [Supabase Connection] SUPABASE URL:', supabaseUrl || 'NÃO CONFIGURADA');
