@@ -75,7 +75,7 @@ const Login = ({ onNavigateToRegister }) => {
           <div className="login-scanner-container">
             {/* Prato de Comida no Scanner */}
             <div className="login-scanner-plate-area">
-              <img src={salmonBroccoli} alt="Salmão com Brócolis" className="login-scanner-food-img" />
+              <img src={salmonBroccoli} alt="Salmão com Brócolis" className="login-scanner-food-img" loading="lazy" />
               {/* Linha horizontal de scan de laser brilhante */}
               <div className="login-scanner-laser-line"></div>
               {/* Cantinhos de foco */}

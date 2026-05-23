@@ -135,6 +135,7 @@ const DietPlanScreen = () => {
                 src={lastScannedToday.imageData}
                 alt={lastScannedToday.name}
                 className="diet-scanned-thumb"
+                loading="lazy"
               />
             ) : (
               <div className="diet-scanned-thumb-placeholder">

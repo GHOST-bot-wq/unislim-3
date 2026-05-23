@@ -25,18 +25,19 @@
 
 .profile-modal-card {
   width: 100%;
-  max-height: 85%;
+  max-height: 85vh;
   background-color: var(--bg-card);
-  border-radius: 36px 36px 0 0;
-  padding: 30px 24px 40px;
+  border-radius: clamp(24px, 5vw, 36px) clamp(24px, 5vw, 36px) 0 0;
+  padding: clamp(20px, 4vh, 30px) clamp(16px, 4vw, 24px) clamp(30px, 6vh, 40px);
   box-shadow: 0 -15px 40px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: clamp(16px, 3vh, 24px);
   overflow-y: auto;
   scrollbar-width: none;
   position: relative;
   animation: slideUpCard 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  contain: content;
 }
 
 .profile-modal-card::-webkit-scrollbar {
@@ -68,13 +69,14 @@
 
 .profile-modal-title {
   font-family: 'Outfit', sans-serif;
-  font-size: 22px;
+  font-size: clamp(18px, 4.5vw, 22px);
   font-weight: 800;
   letter-spacing: -0.5px;
   color: var(--text-primary);
 }
 
 .btn-close-modal {
+  position: relative;
   background: rgba(0, 0, 0, 0.04);
   border: none;
   width: 32px;
@@ -88,6 +90,16 @@
   font-size: 14px;
   font-weight: bold;
   transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.btn-close-modal::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 44px;
+  height: 44px;
+  transform: translate(-50%, -50%);
 }
 
 .btn-close-modal:active {
@@ -119,6 +131,7 @@
   overflow-x: auto;
   padding: 4px 2px;
   scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
 }
 
 .avatar-picker-grid::-webkit-scrollbar {
@@ -154,7 +167,7 @@
 .profile-input-text {
   width: 100%;
   padding: 15px 18px;
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 600;
   color: var(--text-primary);
   background-color: var(--bg-main);
@@ -369,4 +382,18 @@
 
 .btn-reset-onboarding:active {
   background-color: rgba(244, 160, 144, 0.05);
+}
+
+/* Otimizações de layout para celulares em modo paisagem (landscape) */
+@media (max-height: 480px) {
+  .profile-modal-card {
+    max-height: 92vh;
+    padding: clamp(16px, 3vh, 20px) clamp(16px, 4vw, 24px) clamp(20px, 4vh, 28px);
+    border-radius: 24px 24px 0 0;
+    gap: clamp(12px, 2vh, 18px);
+  }
+  
+  .profile-modal-drag-bar {
+    display: none;
+  }
 }

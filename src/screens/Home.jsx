@@ -141,7 +141,7 @@ const Home = () => {
           title="Ver Perfil e Temas"
         >
           {profileImage ? (
-            <img src={profileImage} alt="" className="home-avatar-image-cropped" />
+            <img src={profileImage} alt="" className="home-avatar-image-cropped" loading="lazy" />
           ) : (
             <span className="home-avatar-letter">{(goals.name || 'L').charAt(0).toUpperCase()}</span>
           )}

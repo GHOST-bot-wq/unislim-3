@@ -100,6 +100,7 @@ const Profile = () => {
           src={profileImage} 
           alt="Foto de Perfil" 
           className="profile-uploaded-image" 
+          loading="lazy"
         />
       );
     }

@@ -113,35 +113,68 @@ body {
   flex-direction: column;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 12px 24px 80px; /* Espaço inferior para o menu de navegação */
+  padding: var(--spacing-md) var(--spacing-lg) 84px; /* Espaçamento fluido com clamp e espaço para nav-bar */
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none;  /* IE and Edge */
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch; /* Rolagem inercial nativa do iOS */
 }
 
 .screen-container::-webkit-scrollbar {
   display: none; /* Chrome, Safari, Opera */
 }
 
-/* Elementos Comuns e Utilitários */
+/* Elementos Comuns e Utilitários de Tipografia Fluida */
 h1 {
-  font-size: 28px;
+  font-size: var(--font-size-title-lg);
   font-weight: 700;
   color: var(--text-primary);
   letter-spacing: -0.5px;
-  line-height: 1.2;
+  line-height: 1.25;
 }
 
 h2 {
-  font-size: 20px;
+  font-size: var(--font-size-title-md);
   font-weight: 600;
   color: var(--text-primary);
   letter-spacing: -0.3px;
+  line-height: 1.3;
 }
 
 p {
-  font-size: 15px;
-  line-height: 1.5;
+  font-size: var(--font-size-body);
+  line-height: 1.45;
   color: var(--text-secondary);
+  overflow-wrap: break-word; /* Evita quebra de layout por palavras longas */
+}
+
+/* Classe Utilitária para SVGs Responsivos com clamp() */
+.fluid-svg {
+  width: clamp(20px, 5vw, 32px);
+  height: clamp(20px, 5vw, 32px);
+  min-width: 20px;
+  min-height: 20px;
+  transition: var(--transition-smooth);
+}
+
+/* Classe Utilitária de Toque Mínimo Acessível (44x44px) */
+.touch-target-44 {
+  position: relative;
+}
+
+.touch-target-44::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  transform: translate(-50%, -50%);
+  pointer-events: auto; /* Garante que o clique seja disparado pelo pseudo-elemento */
+  background: transparent;
+  z-index: 10;
 }
 
 .text-center {
@@ -239,6 +272,18 @@ p {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.nav-item .icon-wrapper svg {
+  width: clamp(20px, 5.5vw, 24px);
+  height: clamp(20px, 5.5vw, 24px);
+  transition: var(--transition-smooth);
+}
+
+.nav-scanner-btn svg {
+  width: clamp(24px, 6.5vw, 28px);
+  height: clamp(24px, 6.5vw, 28px);
+  transition: var(--transition-smooth);
 }
 
 .nav-item .nav-label {

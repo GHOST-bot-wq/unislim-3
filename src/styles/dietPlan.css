@@ -7,7 +7,7 @@
 .diet-plan-card {
   background: var(--bg-card);
   border-radius: 24px;
-  padding: 20px;
+  padding: var(--spacing-md);
   border: 1px solid var(--border-subtle);
   box-shadow: var(--shadow-premium);
   margin-bottom: 20px;
@@ -42,7 +42,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 14px;
+  margin-bottom: var(--spacing-sm);
 }
 
 .dpc-title-group {}
@@ -51,7 +51,7 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  font-size: 10px;
+  font-size: var(--font-size-caption);
   font-weight: 700;
   letter-spacing: 0.8px;
   text-transform: uppercase;
@@ -63,7 +63,7 @@
 }
 
 .dpc-title {
-  font-size: 16px;
+  font-size: var(--font-size-title-sm);
   font-weight: 800;
   color: var(--text-primary);
   letter-spacing: -0.3px;
@@ -84,9 +84,9 @@
 .dpc-current-meal {
   background: linear-gradient(135deg, hsl(255, 60%, 98%), hsl(150, 25%, 97%));
   border-radius: 16px;
-  padding: 14px 16px;
+  padding: var(--spacing-sm) var(--spacing-md);
   border: 1px solid hsl(255, 60%, 92%);
-  margin-bottom: 14px;
+  margin-bottom: var(--spacing-sm);
   display: flex;
   align-items: center;
   gap: 12px;
@@ -111,7 +111,7 @@
 }
 
 .dpc-meal-period {
-  font-size: 10px;
+  font-size: var(--font-size-caption);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.7px;
@@ -120,7 +120,7 @@
 }
 
 .dpc-meal-name {
-  font-size: 14px;
+  font-size: var(--font-size-body);
   font-weight: 700;
   color: var(--text-primary);
   letter-spacing: -0.2px;
@@ -130,7 +130,7 @@
 }
 
 .dpc-meal-calories {
-  font-size: 12px;
+  font-size: var(--font-size-body-sm);
   font-weight: 600;
   color: var(--text-secondary);
   margin-top: 1px;
@@ -194,9 +194,21 @@
   font-weight: 700;
   color: var(--color-primary);
   cursor: pointer;
-  padding: 0;
+  padding: 8px 12px 8px 0; /* Padding interno para facilitar toque */
   margin-bottom: 12px;
   transition: opacity 0.15s ease;
+  position: relative;
+}
+
+.diet-screen-back-btn::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  width: 120%;
+  height: 44px;
+  min-height: 44px;
 }
 
 .diet-screen-back-btn:active { opacity: 0.7; }
@@ -207,17 +219,17 @@
   gap: 6px;
   padding: 4px 12px;
   border-radius: 20px;
-  font-size: 10px;
+  font-size: var(--font-size-caption);
   font-weight: 700;
   letter-spacing: 0.8px;
   text-transform: uppercase;
   background: hsl(255, 60%, 96%);
   color: var(--color-primary);
-  margin-bottom: 8px;
+  margin-bottom: var(--spacing-sm);
 }
 
 .diet-screen-title {
-  font-size: 27px;
+  font-size: var(--font-size-title-lg);
   font-weight: 800;
   color: var(--text-primary);
   letter-spacing: -0.7px;
@@ -225,7 +237,7 @@
 }
 
 .diet-screen-subtitle {
-  font-size: 14px;
+  font-size: var(--font-size-body);
   color: var(--text-secondary);
   margin-top: 5px;
   line-height: 1.45;
@@ -235,12 +247,12 @@
 .diet-ai-insight-card {
   background: linear-gradient(135deg, hsl(255, 60%, 98%), hsl(150, 25%, 97%));
   border-radius: 20px;
-  padding: 16px 18px;
+  padding: var(--spacing-md);
   border: 1px solid hsl(255, 60%, 92%);
   display: flex;
   align-items: flex-start;
   gap: 12px;
-  margin-bottom: 24px;
+  margin-bottom: var(--spacing-md);
   animation: scaleIn 0.3s ease forwards;
 }
 
@@ -250,7 +262,7 @@
 }
 
 .diet-ai-icon {
-  font-size: 22px;
+  font-size: clamp(20px, 4.5vw, 24px);
   flex-shrink: 0;
   margin-top: 1px;
 }
@@ -258,7 +270,7 @@
 .diet-ai-text-group {}
 
 .diet-ai-label {
-  font-size: 10px;
+  font-size: var(--font-size-caption);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.8px;
@@ -267,7 +279,7 @@
 }
 
 .diet-ai-message {
-  font-size: 13.5px;
+  font-size: var(--font-size-body-sm);
   font-weight: 600;
   color: var(--text-primary);
   line-height: 1.45;
@@ -280,9 +292,9 @@
   justify-content: space-between;
   background: var(--bg-card);
   border-radius: 18px;
-  padding: 14px 18px;
+  padding: var(--spacing-sm) var(--spacing-md);
   border: 1px solid var(--border-subtle);
-  margin-bottom: 20px;
+  margin-bottom: var(--spacing-md);
 }
 
 .diet-cal-total {
@@ -291,7 +303,7 @@
 }
 
 .diet-cal-total-label {
-  font-size: 11px;
+  font-size: var(--font-size-caption);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.6px;
@@ -299,7 +311,7 @@
 }
 
 .diet-cal-total-value {
-  font-size: 26px;
+  font-size: var(--font-size-title-lg);
   font-weight: 800;
   color: var(--text-primary);
   letter-spacing: -0.8px;
@@ -307,7 +319,7 @@
 }
 
 .diet-cal-total-unit {
-  font-size: 12px;
+  font-size: var(--font-size-body-sm);
   font-weight: 600;
   color: var(--text-secondary);
 }
@@ -320,7 +332,7 @@
 }
 
 .diet-cal-progress-text {
-  font-size: 11px;
+  font-size: var(--font-size-caption);
   font-weight: 600;
   color: var(--text-secondary);
 }
@@ -437,6 +449,19 @@
   justify-content: center;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   flex-shrink: 0;
+  position: relative;
+}
+
+.diet-meal-check-btn::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
 }
 
 .diet-meal-check-btn:active { transform: scale(0.9); }
@@ -448,11 +473,11 @@
 
 /* Corpo do card de refeição */
 .diet-meal-card-body {
-  padding: 0 18px 16px;
+  padding: 0 var(--spacing-md) var(--spacing-md);
 }
 
 .diet-meal-name {
-  font-size: 16px;
+  font-size: var(--font-size-title-sm);
   font-weight: 800;
   color: var(--text-primary);
   letter-spacing: -0.3px;
@@ -467,7 +492,7 @@
 }
 
 .diet-meal-description {
-  font-size: 13px;
+  font-size: var(--font-size-body-sm);
   color: var(--text-secondary);
   line-height: 1.45;
   margin-bottom: 10px;
@@ -482,7 +507,7 @@
 }
 
 .diet-meal-calories-pill {
-  font-size: 13px;
+  font-size: var(--font-size-body-sm);
   font-weight: 700;
   color: var(--color-primary);
   background: hsl(255, 60%, 96%);
@@ -507,13 +532,13 @@
 }
 
 .diet-meal-justification-icon {
-  font-size: 13px;
+  font-size: var(--font-size-body-sm);
   margin-top: 1px;
   flex-shrink: 0;
 }
 
 .diet-meal-justification-text {
-  font-size: 12.5px;
+  font-size: var(--font-size-body-sm);
   color: var(--text-secondary);
   line-height: 1.45;
 }
@@ -521,7 +546,7 @@
 /* Card de integração com o Scanner */
 .diet-scanner-link-card {
   margin-top: 24px;
-  padding: 16px 18px;
+  padding: var(--spacing-sm) var(--spacing-md);
   background: var(--bg-card);
   border-radius: 20px;
   border: 1px dashed hsl(255, 60%, 85%);
@@ -554,14 +579,14 @@
 .diet-scanner-link-info {}
 
 .diet-scanner-link-title {
-  font-size: 14px;
+  font-size: var(--font-size-body);
   font-weight: 700;
   color: var(--text-primary);
   letter-spacing: -0.2px;
 }
 
 .diet-scanner-link-sub {
-  font-size: 12px;
+  font-size: var(--font-size-body-sm);
   color: var(--text-secondary);
   margin-top: 2px;
 }
@@ -606,7 +631,7 @@
 }
 
 .diet-scanned-label {
-  font-size: 10px;
+  font-size: var(--font-size-caption);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.7px;
@@ -614,7 +639,7 @@
 }
 
 .diet-scanned-name {
-  font-size: 13px;
+  font-size: var(--font-size-body-sm);
   font-weight: 700;
   color: var(--text-primary);
   white-space: nowrap;
@@ -623,7 +648,7 @@
 }
 
 .diet-scanned-cal {
-  font-size: 12px;
+  font-size: var(--font-size-body-sm);
   font-weight: 700;
   color: var(--color-primary);
   flex-shrink: 0;

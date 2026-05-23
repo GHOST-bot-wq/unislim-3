@@ -193,24 +193,28 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 12px; /* Mais margem do topo */
-  margin-bottom: -12px; /* Overlap suave para dar mais respiro ao card de login abaixo */
+  margin-top: clamp(8px, 2vh, 16px);
+  margin-bottom: clamp(-16px, -2vh, -8px);
   z-index: 10;
   position: relative;
+  width: 100%;
 }
 
 .login-hero-dashboard {
-  width: 270px; /* Ajuste suave de largura */
-  background: rgba(255, 255, 255, 0.97); /* Quase totalmente opaco para máxima solidez sobre o card traseiro */
+  width: 100%;
+  max-width: 290px;
+  margin: 0 auto;
+  background: rgba(255, 255, 255, 0.97);
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border: 1.5px solid rgba(124, 102, 255, 0.32); /* Borda lilás premium ligeiramente mais nítida */
-  border-radius: 18px; /* Suave redução */
-  padding: 12px 14px; /* Mais compacto vertical/horizontal */
+  border: 1.5px solid rgba(124, 102, 255, 0.32);
+  border-radius: 18px;
+  padding: clamp(10px, 2vh, 14px) clamp(10px, 3vw, 16px);
   display: flex;
   flex-direction: column;
-  gap: 10px; /* Reduzido de 12px */
+  gap: clamp(8px, 1.5vh, 12px);
   animation: floatAnimation 6s infinite ease-in-out;
+  will-change: transform;
 }
 
 @keyframes floatAnimation {
@@ -238,7 +242,7 @@
 }
 
 .login-scanner-plate-area {
-  height: 84px;
+  height: clamp(70px, 12vh, 90px);
   background: #000;
   border-radius: 12px;
   border: 1.5px solid rgba(124, 102, 255, 0.35);
@@ -248,6 +252,7 @@
   align-items: center;
   overflow: hidden;
   box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.6);
+  contain: layout paint style;
 }
 
 .login-scanner-food-img {
@@ -292,6 +297,7 @@
     0 1px 2px rgba(255, 255, 255, 0.8);
   animation: laserScan 3s infinite ease-in-out;
   z-index: 3;
+  will-change: top;
 }
 
 @keyframes laserScan {
@@ -580,9 +586,9 @@
   background: var(--auth-card-bg);
   backdrop-filter: blur(32px) saturate(180%);
   -webkit-backdrop-filter: blur(32px) saturate(180%);
-  border: 1.5px solid var(--auth-card-border); /* Borda sutilmente mais espessa para destaque */
-  border-radius: 24px; /* Reduzido de 30px */
-  padding: 28px 18px 20px; /* Respiro melhor distribuído no topo e na base do card */
+  border: 1.5px solid var(--auth-card-border);
+  border-radius: 24px;
+  padding: clamp(20px, 4vh, 28px) clamp(16px, 4vw, 20px) clamp(16px, 3vh, 22px);
   box-shadow: 
     0 24px 54px rgba(15, 23, 42, 0.12),
     0 12px 28px rgba(124, 102, 255, 0.08),
@@ -591,6 +597,7 @@
   box-sizing: border-box;
   animation: cardEntrance 1s cubic-bezier(0.16, 1, 0.3, 1) both;
   position: relative;
+  contain: content;
 }
 
 @keyframes cardEntrance {
@@ -642,10 +649,10 @@
   width: 100%;
   background: #ffffff;
   border: 1px solid rgba(124, 102, 255, 0.15);
-  border-radius: 12px; /* Reduzido de 14px */
-  padding: 12px 14px; /* Reduzido de 16px 18px. Altura total tipo botão iOS (44px) */
+  border-radius: 12px;
+  padding: 12px 14px;
   color: var(--auth-text-primary);
-  font-size: 13.5px; /* Reduzido de 14px */
+  font-size: 16px; /* Evita o zoom automático do iOS Safari no foco */
   font-family: inherit;
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   box-sizing: border-box;
@@ -949,10 +956,38 @@
 /* Responsividade Geral */
 @media (max-width: 480px) {
   .auth-content-wrapper {
-    padding: 24px 16px;
+    padding: clamp(16px, 4vh, 24px) clamp(12px, 3vw, 16px);
   }
   
   .auth-card {
-    padding: 38px 16px 22px; /* Compensação da Orb adaptada para Mobile */
+    padding: clamp(24px, 5vh, 38px) clamp(12px, 3vw, 16px) clamp(16px, 3vh, 22px);
+  }
+}
+
+/* Celulares em modo paisagem (landscape) com altura reduzida */
+@media (max-height: 480px) {
+  .auth-layout-container {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .auth-content-wrapper {
+    padding: clamp(8px, 2vh, 16px) clamp(16px, 3vw, 24px);
+    justify-content: flex-start;
+    gap: 16px;
+    height: auto;
+    overflow-y: visible;
+  }
+  
+  .login-hero-dashboard-wrapper {
+    display: none; /* Oculta o widget flutuante no landscape para não estourar a tela */
+  }
+  
+  .auth-header {
+    margin-bottom: 12px;
+  }
+  
+  .auth-card {
+    padding: 16px;
   }
 }

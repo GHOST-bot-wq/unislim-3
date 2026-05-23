@@ -5,9 +5,9 @@
 .home-container {
   display: flex;
   flex-direction: column;
-  gap: 26px;
-  padding-top: 24px;
-  padding-bottom: 110px;
+  gap: var(--spacing-lg);
+  padding-top: var(--spacing-md);
+  padding-bottom: 96px; /* Altura suficiente para navegação inferior fluida */
   background-color: var(--bg-main);
   position: relative;
   overflow: hidden;
@@ -89,7 +89,7 @@
 
 .home-minimal-header .greeting-title {
   font-family: 'Outfit', sans-serif;
-  font-size: 25px;
+  font-size: var(--font-size-title-lg);
   font-weight: 800;
   letter-spacing: -0.9px;
   color: var(--text-primary);
@@ -97,7 +97,7 @@
 }
 
 .home-minimal-header .greeting-subtitle {
-  font-size: 13px;
+  font-size: var(--font-size-body-sm);
   font-weight: 500;
   color: var(--text-secondary);
   margin-top: 4px;
@@ -151,12 +151,13 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 16px 0;
+  margin: var(--spacing-md) 0;
+  contain: layout style; /* CSS Containment para isolar recálculos da orbe animada */
 }
 
 .home-fluid-orb {
-  width: 190px;
-  height: 190px;
+  width: clamp(140px, 42vw, 190px);
+  height: clamp(140px, 42vw, 190px);
   border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
   background: linear-gradient(135deg, var(--color-primary), var(--color-accent, hsl(270, 75%, 72%)));
   box-shadow: 
@@ -169,6 +170,7 @@
   justify-content: center;
   position: relative;
   animation: morphOrb 9s infinite ease-in-out, breatheOrb 5s infinite ease-in-out;
+  will-change: transform; /* Hint de renderização para animações fluidas a 60fps */
   cursor: pointer;
   transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
@@ -236,8 +238,9 @@
 }
 
 .home-calorie-counter-pill {
-  width: 82%;
-  padding: 16px 20px;
+  width: 100%;
+  max-width: 320px;
+  padding: clamp(12px, 3.5vw, 16px) clamp(14px, 4.5vw, 20px);
   border-radius: 22px;
   background: rgba(255, 255, 255, 0.75);
   backdrop-filter: blur(14px);
@@ -248,7 +251,7 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.8);
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--spacing-xs);
   margin: 0 auto;
   transition: transform 0.3s ease;
 }
@@ -307,12 +310,12 @@
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-radius: 26px;
-  padding: 22px;
+  padding: clamp(16px, 4vw, 22px);
   border: 1px solid rgba(255, 255, 255, 0.45);
   box-shadow: var(--shadow-subtle);
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--spacing-sm);
   position: relative;
   overflow: hidden;
 }
@@ -332,11 +335,11 @@
 .home-scan-promo-card .promo-header {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--spacing-xs);
 }
 
 .home-scan-promo-card .promo-badge {
-  font-size: 10px;
+  font-size: var(--font-size-caption);
   font-weight: 700;
   text-transform: uppercase;
   color: var(--color-primary);
@@ -347,14 +350,14 @@
 
 .home-scan-promo-card .promo-title {
   font-family: 'Outfit', sans-serif;
-  font-size: 16px;
+  font-size: var(--font-size-title-sm);
   font-weight: 700;
   color: var(--text-primary);
   letter-spacing: -0.3px;
 }
 
 .home-scan-promo-card .promo-desc {
-  font-size: 12.5px;
+  font-size: var(--font-size-body-sm);
   color: var(--text-secondary);
   line-height: 1.45;
 }
@@ -366,7 +369,7 @@
   background-color: var(--color-primary);
   color: #ffffff;
   font-family: 'Outfit', sans-serif;
-  font-size: 13.5px;
+  font-size: var(--font-size-body-sm);
   font-weight: 700;
   cursor: pointer;
   box-shadow: 0 8px 20px rgba(123, 97, 255, 0.12);
@@ -384,12 +387,12 @@
 .home-diet-editorial-card {
   background: var(--bg-card);
   border-radius: 28px;
-  padding: 24px;
+  padding: clamp(16px, 4vw, 24px);
   border: 1px solid var(--border-subtle);
   box-shadow: var(--shadow-subtle);
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--spacing-md);
 }
 
 .home-diet-editorial-card .editorial-title-row {
@@ -400,7 +403,7 @@
 
 .home-diet-editorial-card .editorial-title {
   font-family: 'Outfit', sans-serif;
-  font-size: 18px;
+  font-size: var(--font-size-title-sm);
   font-weight: 800;
   color: var(--text-primary);
   letter-spacing: -0.4px;

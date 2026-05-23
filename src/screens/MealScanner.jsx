@@ -267,7 +267,7 @@ const MealScanner = () => {
                 <div key={index} className="scanner-history-item" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px', backgroundColor: 'var(--bg-card)', borderRadius: '18px', border: '1px solid var(--border-subtle)' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     {meal.imageData ? (
-                      <img src={meal.imageData} alt={meal.name} style={{ width: '40px', height: '40px', borderRadius: '12px', objectFit: 'cover' }} />
+                      <img src={meal.imageData} alt={meal.name} style={{ width: '40px', height: '40px', borderRadius: '12px', objectFit: 'cover' }} loading="lazy" />
                     ) : (
                       <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: 'var(--bg-main)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>{meal.emoji}</div>
                     )}
@@ -300,7 +300,7 @@ const MealScanner = () => {
         </header>
 
         <div className="scan-preview-wrapper">
-          <img src={imagePreview} alt="Preview da refeição" className="scan-camera-preview" />
+          <img src={imagePreview} alt="Preview da refeição" className="scan-camera-preview" loading="lazy" />
           <button className="scan-preview-change-btn" onClick={() => cameraInputRef.current?.click()}>Trocar foto</button>
         </div>
 
@@ -327,7 +327,7 @@ const MealScanner = () => {
         </header>
 
         <div className="scan-preview-wrapper">
-          <img src={imagePreview} alt="Analisando" className="scan-camera-preview" />
+          <img src={imagePreview} alt="Analisando" className="scan-camera-preview" loading="lazy" />
           <div className="scan-laser-line" />
           <div className="scan-camera-lens-glow" />
         </div>
@@ -354,7 +354,7 @@ const MealScanner = () => {
           {/* Card superior com imagem e nome */}
           <div className="scan-result-card-header">
             {imagePreview ? (
-              <img src={imagePreview} alt={result.name} />
+              <img src={imagePreview} alt={result.name} loading="lazy" />
             ) : (
               <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '64px', backgroundColor: 'var(--color-primary-light)' }}>
                 {result.emoji}
