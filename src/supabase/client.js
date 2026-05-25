@@ -238,8 +238,8 @@ if (!supabaseInstance) {
             let result = null;
             let error = null;
 
-            // Filtros básicos
-            let filtered = [...data];
+            // Filtros básicos com tratamento resiliente para não-iteráveis
+            let filtered = Array.isArray(data) ? [...data] : [];
             
             // Tratamento especial para tabelas de dicionário de chaves (ex: profiles pode ser armazenado como dict ou list)
             if (table === 'profiles') {
