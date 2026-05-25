@@ -1,7 +1,8 @@
 /* Estilos para a Tela de Plano Diário (DailyPlan.jsx) */
 
 .daily-plan-container {
-  padding-bottom: 96px; /* Espaço para o botão fixo de finalizar e navegação */
+  padding-top: calc(36px + env(safe-area-inset-top, 0px));
+  padding-bottom: 24px; /* Rolagem natural até o rodapé */
 }
 
 /* Header */
@@ -29,8 +30,8 @@
   background-color: var(--bg-card);
   border-radius: 20px;
   padding: 16px 20px;
-  border: 1px solid var(--border-subtle);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.015);
+  border: 1.5px solid var(--border-subtle); /* Borda reforçada */
+  box-shadow: 0 10px 25px rgba(29, 28, 26, 0.04), 0 2px 4px rgba(29, 28, 26, 0.01); /* Sombra mais destacada */
   margin-bottom: 24px;
   transition: transform 0.2s ease;
 }
@@ -81,23 +82,24 @@
 
 .plan-habit-item {
   background-color: var(--bg-card);
-  border-radius: 20px;
-  padding: 18px 20px;
-  border: 1px solid var(--border-subtle);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.01);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border-radius: 24px;
+  padding: 20px 22px;
+  border: 1.5px solid var(--border-subtle); /* Borda reforçada */
+  box-shadow: 0 10px 25px rgba(29, 28, 26, 0.05), 0 2px 4px rgba(29, 28, 26, 0.02); /* Sombra mais destacada */
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
   position: relative;
   overflow: hidden;
 }
 
 .plan-habit-item:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.02);
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(29, 28, 26, 0.08), 0 4px 8px rgba(29, 28, 26, 0.03);
 }
 
 .plan-habit-item.completed {
-  border-color: rgba(84, 180, 137, 0.15);
-  background-color: rgba(252, 253, 252, 0.6);
+  border-color: var(--theme-accent); /* Borda acompanha a cor do tema */
+  background-color: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 8px 20px rgba(123, 97, 255, 0.05);
 }
 
 .plan-habit-header {
@@ -140,7 +142,7 @@
 .plan-habit-action-area {
   margin-top: 14px;
   padding-top: 14px;
-  border-top: 1px dashed var(--border-subtle);
+  border-top: 1.5px dashed var(--border-subtle); /* Divisor mais visível */
 }
 
 /* Hidratação - Copos/Bolinhas */
@@ -332,7 +334,7 @@
   padding: 14px 16px;
   border-radius: 16px;
   background-color: var(--bg-card);
-  border: 1px solid var(--border-subtle);
+  border: 1.5px solid var(--border-subtle); /* Borda reforçada */
   text-align: center;
   margin-top: 12px;
   margin-bottom: 24px;
@@ -347,12 +349,12 @@
 
 /* Botão Finalizar Fixo no Rodapé do Device */
 .fixed-cta-footer {
-  position: absolute;
-  bottom: 84px; /* Acima da NavigationBar */
-  left: 0;
+  position: relative;
   width: 100%;
-  padding: 0 24px;
-  z-index: 9;
+  padding: 0;
+  margin-top: 24px;
+  margin-bottom: 12px;
+  z-index: 2;
 }
 
 .btn-finalize-day {

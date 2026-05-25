@@ -142,6 +142,9 @@ const Login = ({ onNavigateToRegister }) => {
                 disabled={isSubmitting}
                 required
                 autoComplete="email"
+                autoCapitalize="none"
+                autoCorrect="off"
+                spellCheck="false"
               />
             </div>
           </div>

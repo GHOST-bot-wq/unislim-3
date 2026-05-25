@@ -59,10 +59,11 @@ export const AuthProvider = ({ children }) => {
 
   // Login com e-mail e senha
   const login = async (email, password) => {
-    console.log(`🔌 [AuthContext] Tentando fazer login para: ${email}`);
+    const cleanEmail = email.trim().toLowerCase();
+    console.log(`🔌 [AuthContext] Tentando fazer login para: ${cleanEmail}`);
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
-        email,
+        email: cleanEmail,
         password,
       });
       if (error) throw error;
@@ -82,10 +83,11 @@ export const AuthProvider = ({ children }) => {
 
   // Cadastro de novo usuário com dados do onboarding
   const register = async (email, password, onboardingData) => {
-    console.log(`🔌 [AuthContext] Iniciando cadastro para: ${email}`);
+    const cleanEmail = email.trim().toLowerCase();
+    console.log(`🔌 [AuthContext] Iniciando cadastro para: ${cleanEmail}`);
     try {
       const { data, error } = await supabase.auth.signUp({
-        email,
+        email: cleanEmail,
         password,
         options: {
           data: {

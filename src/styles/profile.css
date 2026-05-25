@@ -7,7 +7,7 @@
   height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: var(--spacing-lg) var(--spacing-md) 100px var(--spacing-md);
+  padding: calc(36px + env(safe-area-inset-top, 0px)) var(--spacing-md) calc(100px + env(safe-area-inset-bottom, 0px)) var(--spacing-md);
   display: flex;
   flex-direction: column;
   gap: var(--spacing-lg);
@@ -229,9 +229,9 @@
   background: rgba(255, 255, 255, 0.75);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(255, 255, 255, 0.6);
+  border: 1.5px solid var(--border-subtle); /* Borda reforçada */
   box-shadow: 
-    0 12px 35px rgba(0, 0, 0, 0.02),
+    0 12px 35px rgba(29, 28, 26, 0.05),
     inset 0 1px 0 rgba(255,255,255,0.8);
   overflow: hidden;
 }
@@ -331,8 +331,8 @@
   background: rgba(255, 255, 255, 0.75);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.02);
+  border: 1.5px solid var(--border-subtle); /* Borda reforçada */
+  box-shadow: 0 12px 35px rgba(29, 28, 26, 0.05);
 }
 
 .profile-details-header {
@@ -399,7 +399,7 @@
 
 .theme-option-card {
   position: relative;
-  border: 1px solid rgba(255, 255, 255, 0.6);
+  border: 1.5px solid var(--border-subtle); /* Borda reforçada */
   border-radius: 20px;
   background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(10px);
@@ -413,7 +413,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.01);
+  box-shadow: var(--shadow-subtle);
 }
 
 .theme-card-glow {
@@ -497,11 +497,11 @@
   padding: 16px 12px;
   border-radius: 22px;
   background: rgba(255, 255, 255, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: 1.5px solid var(--border-subtle); /* Borda reforçada */
   text-align: center;
   overflow: hidden;
   transition: all 0.3s ease;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.01);
+  box-shadow: var(--shadow-subtle);
   scroll-snap-align: start;
 }
 
@@ -569,7 +569,8 @@
   background: rgba(255, 255, 255, 0.75);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(255, 255, 255, 0.6);
+  border: 1.5px solid var(--border-subtle); /* Borda reforçada */
+  box-shadow: 0 12px 35px rgba(29, 28, 26, 0.05); /* Sombra mais destacada */
   padding: 12px 20px;
   display: flex;
   flex-direction: column;

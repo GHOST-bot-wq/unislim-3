@@ -88,7 +88,8 @@ if (!supabaseInstance) {
         
         // Verifica se o usuário existe no localStorage
         const users = JSON.parse(localStorage.getItem('unislim_mock_users') || '[]');
-        const user = users.find(u => u.email === email && u.password === password);
+        const cleanEmail = email.trim().toLowerCase();
+        const user = users.find(u => u.email.trim().toLowerCase() === cleanEmail && u.password === password);
         
         if (!user) {
           return { data: { user: null, session: null }, error: { message: 'E-mail ou senha inválidos.' } };
@@ -113,7 +114,8 @@ if (!supabaseInstance) {
         await new Promise(resolve => setTimeout(resolve, 1000));
         
         const users = JSON.parse(localStorage.getItem('unislim_mock_users') || '[]');
-        if (users.find(u => u.email === email)) {
+        const cleanEmail = email.trim().toLowerCase();
+        if (users.find(u => u.email.trim().toLowerCase() === cleanEmail)) {
           return { data: { user: null }, error: { message: 'Este e-mail já está cadastrado.' } };
         }
         
@@ -382,40 +384,67 @@ if (!supabaseInstance) {
     storage: {
       from: (bucket) => ({
         upload: async (filePath, file, options) => {
-          await new Promise(resolve => setTimeout(resolve, 1500)); // Simula o upload
+          await new Promise(resolve => setTimeout(resolve, 800)); // Latência de rede simulada rápida
           
-          // No ambiente local, transformamos o arquivo em data URL para visualização instantânea
-          return new Promise((resolve) => {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-              const fileKey = `${bucket}_${filePath}`;
-              localStorage.setItem(`unislim_mock_file_${fileKey}`, reader.result);
-              resolve({
-                data: { path: filePath },
-                error: null
-              });
+          try {
+            // Cria uma URL de Blob em memória para visualização instantânea sem estourar o LocalStorage
+            const blobUrl = URL.createObjectURL(file);
+            const fileKey = `${bucket}_${filePath}`;
+            
+            // Armazena a Blob URL em memória global para recuperação nesta sessão
+            window.unislim_mock_files = window.unislim_mock_files || {};
+            window.unislim_mock_files[fileKey] = blobUrl;
+            
+            // Tenta salvar no localStorage para persistência parcial apenas se for menor que 500KB
+            if (file.size < 500000) {
+              const reader = new FileReader();
+              reader.onloadend = () => {
+                try {
+                  localStorage.setItem(`unislim_mock_file_${fileKey}`, reader.result);
+                } catch (e) {
+                  console.warn('⚠️ [Supabase Mock] LocalStorage cheio, ignorando persistência offline para este arquivo.');
+                }
+              };
+              reader.readAsDataURL(file);
+            }
+            
+            return {
+              data: { path: filePath },
+              error: null
             };
-            reader.onerror = () => {
-              resolve({
-                data: null,
-                error: { message: 'Erro ao carregar o arquivo.' }
-              });
+          } catch (err) {
+            return {
+              data: null,
+              error: { message: err.message || 'Erro ao carregar o arquivo.' }
             };
-            reader.readAsDataURL(file);
-          });
+          }
         },
         getPublicUrl: (filePath) => {
-          const fileKey = `avatars_${filePath}`; // Assume avatars por simplicidade ou faz dinâmico
-          const dataUrl = localStorage.getItem(`unislim_mock_file_avatars_${filePath}`) || 
-                           localStorage.getItem(`unislim_mock_file_meals_${filePath}`);
+          const fileKey = `${bucket}_${filePath}`;
           
-          // Se tiver salvo localmente, usa a data URL. Caso contrário, retorna um placeholder premium
+          // Tenta pegar primeiro da memória (Blob URL temporária ativa nesta sessão)
+          if (window.unislim_mock_files && window.unislim_mock_files[fileKey]) {
+            return { data: { publicUrl: window.unislim_mock_files[fileKey] } };
+          }
+          
+          // Tenta pegar do localStorage
+          const dataUrl = localStorage.getItem(`unislim_mock_file_${fileKey}`);
           if (dataUrl) {
             return { data: { publicUrl: dataUrl } };
           }
           
-          // Retorna URL de imagem placeholder dependendo do caminho
-          return { data: { publicUrl: `https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80` } };
+          // Fallback para caminhos legados
+          const fallbackKey = `avatars_${filePath}`;
+          const fallbackData = localStorage.getItem(`unislim_mock_file_${fallbackKey}`);
+          if (fallbackData) {
+            return { data: { publicUrl: fallbackData } };
+          }
+          
+          // Retorna URL de imagem placeholder dependendo do caminho/bucket
+          if (filePath.includes('avatar') || bucket === 'avatars') {
+            return { data: { publicUrl: `https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80` } };
+          }
+          return { data: { publicUrl: `https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=500&auto=format&fit=crop&q=80` } };
         }
       })
     }
