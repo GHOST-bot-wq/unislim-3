@@ -117,8 +117,88 @@ const MealScanner = () => {
   const [result, setResult] = useState(null);
   const [saved, setSaved] = useState(false);
 
+  // Configuração da Chave de API do Gemini para detecção real
+  const [geminiKey, setGeminiKey] = useState(() => localStorage.getItem('unislim_gemini_key') || '');
+  const [showKeyConfig, setShowKeyConfig] = useState(false);
+  const [tempKey, setTempKey] = useState(geminiKey);
+
   const fileInputRef = useRef(null);
   const cameraInputRef = useRef(null);
+
+  // Função auxiliar para analisar comida usando a API do Gemini
+  const analyzeWithGemini = async (base64Image, apiKey) => {
+    const mimeType = base64Image.match(/data:([^;]+);base64/)?.[1] || 'image/jpeg';
+    const base64Data = base64Image.split(',')[1];
+
+    const prompt = `Analise esta imagem de refeição/comida e extraia as informações exatas e fiéis de calorias e macronutrientes. 
+Se a imagem não for de comida ou for impossível de identificar, tente estimar de forma coerente ou use o contexto do prato.
+Retorne APENAS um objeto JSON válido, sem qualquer bloco de código markdown (como \`\`\`json), sem textos adicionais antes ou depois. 
+O JSON deve seguir exatamente esta estrutura de exemplo:
+{
+  "name": "Nome descritivo do prato em português (ex: Salmão Grelhado com Arroz)",
+  "calories": 450,
+  "protein": 35,
+  "carbs": 40,
+  "fat": 15,
+  "emoji": "🐟",
+  "healthRating": "healthy",
+  "healthText": "Excelente",
+  "tags": ["Premium", "Proteico", "Equilibrado"],
+  "feedback": "Opinião curta e estratégica da IA em português sobre os benefícios desta refeição para a saúde."
+}
+
+As regras para as propriedades são:
+- calories: número inteiro de calorias estimadas.
+- protein: gramas de proteína (inteiro).
+- carbs: gramas de carboidrato (inteiro).
+- fat: gramas de gordura (inteiro).
+- emoji: um único emoji condizente com a refeição.
+- healthRating: deve ser exatamente "healthy", "neutral" ou "attention".
+- healthText: deve ser exatamente "Excelente", "Moderado" ou "Atenção".
+- tags: array de strings com 2 ou 3 tags curtas e estratégicas (ex: ["Rico em Fibras", "Leve"]).
+- feedback: uma breve explicação nutricional estratégica em português.`;
+
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        contents: [
+          {
+            parts: [
+              { text: prompt },
+              {
+                inlineData: {
+                  mimeType: mimeType,
+                  data: base64Data
+                }
+              }
+            ]
+          }
+        ],
+        generationConfig: {
+          responseMimeType: 'application/json'
+        }
+      })
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Erro na API do Gemini: ${response.status} - ${errorText}`);
+    }
+
+    const data = await response.json();
+    const textResponse = data.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!textResponse) {
+      throw new Error("Resposta vazia da API do Gemini.");
+    }
+
+    const cleanedText = textResponse.replace(/```json/g, '').replace(/```/g, '').trim();
+    return JSON.parse(cleanedText);
+  };
 
   // Manipulador de imagem carregada
   const handleFileSelect = (e) => {
@@ -136,23 +216,56 @@ const MealScanner = () => {
     e.target.value = '';
   };
 
-  // Efeito de loop de carregamento da IA
+  // Efeito de loop de carregamento da IA com chamada Gemini real
   const handleAnalyze = () => {
     setPhase('loading');
     setLoadingStep(0);
     setLoadingProgress(0);
 
+    const activeKey = geminiKey || import.meta.env.VITE_GEMINI_API_KEY || '';
+    let apiResult = null;
+    let apiError = null;
+
+    const apiPromise = (async () => {
+      if (activeKey) {
+        try {
+          const res = await analyzeWithGemini(imagePreview, activeKey);
+          apiResult = res;
+        } catch (err) {
+          console.error("Erro na análise real:", err);
+          apiError = err;
+        }
+      }
+    })();
+
     let stepIndex = 0;
-    const stepInterval = setInterval(() => {
+    const stepInterval = setInterval(async () => {
       if (stepIndex < LOADING_STEPS.length - 1) {
         stepIndex++;
         setLoadingStep(stepIndex);
         setLoadingProgress(LOADING_STEPS[stepIndex].progress);
       } else {
         clearInterval(stepInterval);
-        // Seleciona um alimento do banco correspondente
-        const meal = MEAL_DATABASE[Math.floor(Math.random() * MEAL_DATABASE.length)];
-        setResult(meal);
+
+        // Aguarda a conclusão da API se ela estiver rodando
+        if (activeKey) {
+          try {
+            await apiPromise;
+          } catch {
+            // Ignorado, o erro já é tratado no escopo da promise
+          }
+        }
+
+        if (apiResult) {
+          setResult(apiResult);
+        } else {
+          // Fallback se falhou ou não tem chave
+          if (activeKey && apiError) {
+            alert("A análise da IA real falhou (usando simulação de fallback). Detalhe: " + apiError.message);
+          }
+          const meal = MEAL_DATABASE[Math.floor(Math.random() * MEAL_DATABASE.length)];
+          setResult(meal);
+        }
         setTimeout(() => setPhase('result'), 500);
       }
     }, 800);
@@ -211,12 +324,14 @@ const MealScanner = () => {
      FASE 1: IDLE (TELA INICIAL DE CÂMERA SIMULADA)
      ──────────────────────────────────────────────────────── */
   if (phase === 'idle') {
+    const hasActiveKey = geminiKey || import.meta.env.VITE_GEMINI_API_KEY;
+
     return (
       <div className="screen-container scanner-container">
         <input ref={fileInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleFileSelect} />
         <input ref={cameraInputRef} type="file" accept="image/*" capture="environment" style={{ display: 'none' }} onChange={handleFileSelect} />
 
-        <header>
+        <header style={{ marginBottom: '8px' }}>
           <div className="scanner-header-badge">
             <span className="scanner-header-badge-dot" />
             Scanner Inteligente
@@ -226,6 +341,56 @@ const MealScanner = () => {
             Aponte a câmera para seu prato de comida e descubra calorias e macronutrientes instantaneamente por IA.
           </p>
         </header>
+
+        {/* Gemini API Key Config */}
+        <div className={`gemini-key-card ${hasActiveKey ? 'active' : 'inactive'}`}>
+          <div className="gemini-key-header" onClick={() => setShowKeyConfig(!showKeyConfig)}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span className={`status-dot ${hasActiveKey ? 'active' : 'inactive'}`} />
+              <span className="status-text">
+                {hasActiveKey ? 'IA Real Ativa (Gemini)' : 'Modo Simulação (Sem Chave)'}
+              </span>
+            </div>
+            <button className="btn-key-toggle">
+              {showKeyConfig ? 'Fechar ✕' : 'Configurar Key ⚙️'}
+            </button>
+          </div>
+
+          {showKeyConfig && (
+            <div className="gemini-key-dropdown">
+              <p className="dropdown-info">
+                Para analisar imagens reais de alimentos de forma 100% fiel, insira uma chave de API gratuita do Gemini:
+              </p>
+              <div className="key-input-row">
+                <input
+                  type="password"
+                  placeholder="Cole sua API Key do Gemini..."
+                  value={tempKey}
+                  onChange={(e) => setTempKey(e.target.value)}
+                  className="key-input"
+                />
+                <button
+                  onClick={() => {
+                    const cleanKey = tempKey.trim();
+                    setGeminiKey(cleanKey);
+                    if (cleanKey) {
+                      localStorage.setItem('unislim_gemini_key', cleanKey);
+                    } else {
+                      localStorage.removeItem('unislim_gemini_key');
+                    }
+                    setShowKeyConfig(false);
+                  }}
+                  className="btn-key-save"
+                >
+                  Salvar
+                </button>
+              </div>
+              <p className="dropdown-help">
+                Como obter uma chave? Crie grátis no <a href="https://aistudio.google.com/" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: '700', textDecoration: 'underline' }}>Google AI Studio</a>.
+              </p>
+            </div>
+          )}
+        </div>
 
         {/* Câmera Simulada Premium */}
         <div className="scan-camera-fake" onClick={() => cameraInputRef.current?.click()}>
